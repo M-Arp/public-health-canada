@@ -46,3 +46,61 @@ Practice the following things.
 4. Try embedding a chunk of R code in the document, anything.
 5. Commit and push your changes up to the remote repository. 
 6. Try to file a pull request to the `main` branch. 
+
+testing below:
+
+bold text: **bold blue cheese**
+
+italic text: *italian style dressing*
+
+strikethrough: ~~toliet paper~~ 
+
+superscript: e=mc^2^
+
+link: [LISPOP Homepage](LISPOP _ Laurier Institute for the Study of Public Opinion and Policy.html)
+
+# Large
+
+## Medium
+
+### Small
+
+#### Snack Size
+
+##### Kids
+
+Image:
+![I'm from Buffalo where it's cold in summer](billnation.jpg "Title")
+
+# Buff
+
+
+* Fruit
+    + Apples
+    + Oranges
+    + Bananas
+    + Grapes
+
+1. January
+    + New Year's
+2. February
+    + Valentine's
+3. March
+    + St Patricks
+4. April
+    + April Fool's
+    
+
+> thread indented
+
+Chunks below:
+```{r test}
+help(cars)
+# this pulls up the documentation
+```
+
+| Produce      | Stock          | Price |
+| ------------- |:-------------:| -----:|
+| Apples     | 4 | $1 |
+| Bananas      | 3     |   $0.5 |
+| Oranges | 2     |    $0.79 |
