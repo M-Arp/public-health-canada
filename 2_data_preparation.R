@@ -20,7 +20,11 @@ ph %>%
     Q14_1>2 ~ 0,
     #All other cases
     TRUE ~ 0
-  ))->ph
+  )
+  #know2=case_when(),
+  #know3=case_when(),
+  #know4=case_when()
+  )->ph
 
 #check ph$know1
 ph$know1
