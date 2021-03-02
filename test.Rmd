@@ -104,3 +104,27 @@ help(cars)
 | Apples     | 4 | $1 |
 | Bananas      | 3     |   $0.5 |
 | Oranges | 2     |    $0.79 |
+
+RMarkdown is **really** _cool_
+
+### Test Recipes:
+
+* Chicken Bacon Ranch
+* Buffalo Chicken
+* Brussels Sprouts
+* Jalapeno Poppers
+
+### Directions:
+1. Combine buttermilk, 1/4 cup of Franks Buffalo sauce, dill pickle juice, garlic powder, salt and black pepper and mix to combine. Add chicken and make sure it is completely coated. Cover and refrigerate for at least one hour, but it is best to marinate overnight.
+2. Preheat the oven to 450°F (or air fryer to 380°F) and prepare a baking sheet by spraying nonstick cooking spray.
+3. Combine all of the ingredients needed for the breading and mix to evenly incorporate. Take your chicken breasts, one at a time, and evenly coat the breading on every side. 
+4. Baked: Evenly space your chicken on the baking sheet and bake for 15 minutes, until the tops are golden brown. Flip the chicken and bake for an additional 15 minutes, or until golden brown.
+5. Air Fry: Evenly space your chicken in the air fryer, spray with cooking spray and bake for 10 minutes, flip and spray other side. Cook another 10 minutes or until crispy on the outside and tender on the inside.
+6. Toss in your favorite hot sauce for added flavor!
+```{r}
+runif(1)    # generates 1 random number
+
+runif(3)    # generates 3 random number
+
+runif(3, min=5, max=10)    # define the range between 5 and 10
+```
