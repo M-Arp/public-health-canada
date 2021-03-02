@@ -69,4 +69,9 @@ runif(1)    # generates 1 random number
 runif(3)    # generates 3 random number
 
 runif(3, min=5, max=10)    # define the range between 5 and 10
+<<<<<<< HEAD
 ```
+=======
+```
+
+>>>>>>> 35b9c9214b3bde75decec20b6ac531c82e7d755f
