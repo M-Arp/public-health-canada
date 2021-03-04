@@ -2,11 +2,11 @@
 ####This line calls the code that loads the data####
 source('1_data_import.R')
 #Find the questions on science literacy
-look_for(ph, 'tomatoes')
+look_for(full, 'tomatoes')
 #Check value labels for Q14
-val_labels(ph$Q14_1)
+val_labels(full$Q14_1)
 
-ph %>% 
+full %>% 
   #We are mutating existing variables so the mutate command
   mutate(
     #We are making the variable know1 using the case_when function
@@ -24,10 +24,10 @@ ph %>%
   #know2=case_when(),
   #know3=case_when(),
   #know4=case_when()
-  )->ph
+  )->full
 
-#check ph$know1
-ph$know1
+#check full$know1
+full$know1
 #Now repeat that code for Q14_2, Q14_3, Q14_4
 #This necessitates reading the text of the questions and setting the conditions <3, > 2 to return the correct value. 
 #You can copy and paste the above code to repeat for Q14_2, Q14_3, Q14_4, but ideally, you would be able to nest it above, inside the mutate() command, so add lines for know2=case_when(), know3=case_when() , etc. etc. 
