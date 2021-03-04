@@ -24,5 +24,6 @@ str(full)
 #load the labelled library
 library(labelled)
 #check value labels
+
 val_labels(full)
 
