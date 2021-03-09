@@ -1,8 +1,9 @@
 
 #This script will contain code that prepares the dataset for analysis
-####This line calls the code that loads the data####
+####Data Import####
 source('1_data_import.R')
 
+#### Science Literacy ####
 #Find the questions on science literacy
 look_for(full, 'tomatoes')
 #Check value labels for Q14
@@ -57,7 +58,7 @@ full$know4
 
 
 
-#### Next preparation####
+#### Cognitive Reflection Questions####
 # We need to code the correct answers to these questions as correct.
 # This code spits out an html table that has all the responses in it. T/here are 229 unique responses. 
 # 
@@ -168,7 +169,7 @@ cat(kable(table(full$Q21_1, full$crt4), format="html"), file=here("Tables", "crt
 full %>% 
   select(Q1_1:Q1_9_SP) %>% 
  var_label()
-#### Code Public Health Most Important Problem Respones
+#### Code Public Health Most Important Problem Respones ####
 #### This code below assigns meaningful variable names to the most important problem variables
 
 #Start with the dataframe
@@ -191,7 +192,7 @@ mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
 #Check
 out$out
 
-#### Assign variable names to the new variables
+#### Assign variable names to the new variables 
 #Start with the data frame
 full %>% 
   #Select the questions that are the most important problem
@@ -200,16 +201,20 @@ full %>%
   rename_with(~out$out, everything()) %>% 
   #Bind the columns from the original `full` dataframe and add to them the new variables we just made
   bind_cols(full, .) ->full
-
+View(full)
 #Check 
 names(full)
 #### This code writes out the spreadsheet with the text responses 
+#Encoding(full$Q1_9_SP)<-'UTF-8'
+#full$Q1_9_SP<-iconv(full$Q1_9_SP, from="UTF-8", to="LATIN1")
+library(readr)
+
 # full %>%
 #   mutate(other_problem_text=tolower(Q1_9_SP)) %>%
 #   group_by(other_problem_text) %>%
 #   summarize(n=n()) %>%
 #   mutate(category=rep("", nrow(.))) %>%
-#   write_csv(file=here("data", "other_problem_text.csv"))
+# REMEMBER TO PUT THE FILENAME BACK IN; THIS IS ONLY FOR SIMON
+#   write_excel_csv(file=here("data", ""))
 
-####This code reads in the spreadsheet with the text responses
-#read_csv(file=here("data", "other_problem_text_coded.csv"))
+
