@@ -1,0 +1,43 @@
+---
+title: "Summary of Recodes"
+author: "Simon J. Kiss, Matthew J. Arp and Scott Lu"
+date: "09/03/2021"
+output: pdf_document
+
+---
+
+```{r setup, include=FALSE, echo=F}
+knitr::opts_chunk$set(echo = TRUE, message=F, warning=T, echo=F, cache=T)
+```
+
+
+```{r load-data, results="hide"}
+source('2_data_preparation.R')
+```
+
+## Introduction
+
+This document tracks and summarizes basic data wrangling and recodes conducted at LISPOP for the 2021 Canadian Public Health Workforce and General Population Survey. The purpose of this document is to facilitate multi-institutional collaboration. LISPOP staff will take on the task of basic variable recodes and export data files for analysis by project researchers so that they can dedicate their attention to substantive analyses. 
+
+## Scientific Literacy Questions
+
+We have recoded variables X, Y and Z into variables `know1`, `know2` and `know3` such that respondents were coded 1 if they were correct and 0 if they were incorrect. MATT ADD ANY INFORMATION HERE
+
+```{r compare-scientific-literacy, results='markup', echo=T}
+
+full %>% 
+  select(Q14_1:Q14_4, starts_with('know')) %>% 
+  as_factor() 
+```
+
+
+## Cognitive Reflection test Questions 
+We have recoded variables X, Y and Z into variables `crt1`, `crt2` etc.such that respondents were coded 1 if they got the correct response and 0 if they were incorrect. MATT ADD ANY INFORMATION HERE
+```{r compare-crt, echo=T}
+full %>% 
+  select(Q18_1:Q21_1, starts_with('crt')) %>% 
+  as_factor() 
+```
+## Most Important Problem in Public Health 
+We have provided more meaningful variable names (e.g. `Obesity`, `Vaccine Hesitancy` , etc. ) and *appended* these to the data frame. The original variables are `Q1_1` through `Q1_9`. In addition, we have gone through the open ended responses that respondents provided and added new variables that appeared frequently in the data set. These include: 
+

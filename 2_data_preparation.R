@@ -164,4 +164,52 @@ cat(kable(table(full$Q19_1, full$crt2), format="html"), file=here("Tables", "crt
 cat(kable(table(full$Q20_1, full$crt3), format="html"), file=here("Tables", "crt3_diagnostics.html"))
 cat(kable(table(full$Q21_1, full$crt4), format="html"), file=here("Tables", "crt4_diagnostics.html"))
 
+#### We need to rename the variables Q1_
+full %>% 
+  select(Q1_1:Q1_9_SP) %>% 
+ var_label()
+#### Code Public Health Most Important Problem Respones
+#### This code below assigns meaningful variable names to the most important problem variables
 
+#Start with the dataframe
+full %>% 
+  #Select the most important problem question
+  select(Q1_1:Q1_9) %>% 
+  #Get the variable labels
+  var_label() %>% 
+  #Stack them
+bind_rows() %>% 
+pivot_longer(cols=everything()) %>% 
+  #This gets the pattern Obesity, VAccine Hesitancy, etc, 
+mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
+  #This delets the remaining - 
+  mutate(out=str_replace_all(out, pattern=" -", replace=""),
+         #This trims whitespace
+         out=str_trim(out, side='both')) %>% 
+  #Dump this into a temporary data frame out
+  select(out)->out
+#Check
+out$out
+
+#### Assign variable names to the new variables
+#Start with the data frame
+full %>% 
+  #Select the questions that are the most important problem
+  select(Q1_1:Q1_9) %>% 
+  #Rename them with out$out from above
+  rename_with(~out$out, everything()) %>% 
+  #Bind the columns from the original `full` dataframe and add to them the new variables we just made
+  bind_cols(full, .) ->full
+
+#Check 
+names(full)
+#### This code writes out the spreadsheet with the text responses 
+# full %>%
+#   mutate(other_problem_text=tolower(Q1_9_SP)) %>%
+#   group_by(other_problem_text) %>%
+#   summarize(n=n()) %>%
+#   mutate(category=rep("", nrow(.))) %>%
+#   write_csv(file=here("data", "other_problem_text.csv"))
+
+####This code reads in the spreadsheet with the text responses
+#read_csv(file=here("data", "other_problem_text_coded.csv"))

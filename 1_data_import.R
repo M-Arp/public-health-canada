@@ -27,3 +27,4 @@ library(labelled)
 
 val_labels(full)
 
+nrow(full)
