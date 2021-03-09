@@ -3,11 +3,11 @@ install.packages("labelled")
 ####This line calls the code that loads the data####
 source('1_data_import.R')
 #Find the questions on science literacy
-look_for(ph, 'tomatoes')
+look_for(full, 'tomatoes')
 #Check value labels for Q14
-val_labels(ph$Q14_1)
+val_labels(full$Q14_1)
 
-ph %>% 
+full %>% 
   #We are mutating existing variables so the mutate command
   mutate(
     #We are making the variable know1 using the case_when function
@@ -46,29 +46,28 @@ ph %>%
     Q14_4<3 ~ 0,
     TRUE ~ 0  
   )
-  )->ph
+  )->full
 
-#check ph$know
-ph$know1
-ph$know2
-ph$know3
-ph$know4
+#check full$know
+full$know1
+full$know2
+full$know3
+full$know4
 
 #Now repeat that code for Q14_2, Q14_3, Q14_4
 #This necessitates reading the text of the questions and setting the conditions <3, > 2 to return the correct value. 
 #You can copy and paste the above code to repeat for Q14_2, Q14_3, Q14_4, but ideally, you would be able to nest it above, inside the mutate() command, so add lines for know2=case_when(), know3=case_when() , etc. etc. 
 
-source('1_data_import.R')
-#Find the questions on CRT
-look_for(ph, 'race')
+#Find the questions on crt
+look_for(full, 'race')
 #Check value labels for Q18
-val_labels(ph$Q18_1)
+val_labels(full$Q18_1)
 
-ph %>% 
+full %>% 
   #We are mutating existing variables so the mutate command
   mutate(
-    #We are making the variable CRT1 using the case_when function
-    CRT1=case_when(
+    #We are making the variable crt1 using the case_when function
+    crt1=case_when(
      #When it is a variation of 2 or second, it is correct
       #separate with a comma
       Q18_1 == 2 ~ 1,
@@ -88,7 +87,7 @@ ph %>%
       #All other cases
       TRUE ~ 0
     ),
-    CRT2=case_when(
+    crt2=case_when(
       #When it is a variation of 8 or eight, it is correct
       Q19_1 == 8 ~ 1,
       Q19_1 == "8 alive" ~ 1,
@@ -100,7 +99,7 @@ ph %>%
       #All other cases
       TRUE ~ 0
     ),
-    CRT3=case_when(
+    crt3=case_when(
       #When it is a variation of Emily, it is correct
       Q20_1 == "Emilie" ~ 1,
       Q20_1 == "Émilie" ~ 1,
@@ -115,25 +114,25 @@ ph %>%
       #All other cases
       TRUE ~ 0
     ),
-    CRT4=case_when(
+    crt4=case_when(
       #When it is a variation of 0 or zero, it is correct
       Q21_1 == 0 ~ 1,
-      Q21_1 == "0'" ~ 0,
-      Q21_1 == "0 no dirt" ~ 0,
-      Q21_1 == "C’est pad" ~ 0,
-      Q21_1 == "None" ~ 0,
-      Q21_1 == "Zero" ~ 0,
-      Q21_1 == "zero dirt" ~ 0,
-      Q21_1 == "zzero" ~ 0,
-      Q21_1 == "nothing" ~ 0,
+      Q21_1 == "0'" ~ 1,
+      Q21_1 == "0 no dirt" ~ 1,
+      Q21_1 == "C’est pad" ~ 1,
+      Q21_1 == "None" ~ 1,
+      Q21_1 == "Zero" ~ 1,
+      Q21_1 == "zero dirt" ~ 1,
+      Q21_1 == "zzero" ~ 1,
+      Q21_1 == "nothing" ~ 1,
       #All other cases
       TRUE ~ 0  
     )
-  )->ph
+  )->full
 
-#check ph$CRT
-ph$CRT1
-ph$CRT2
-ph$CRT3
-ph$CRT4
+#check full$crt
+full$crt1
+full$crt2
+full$crt3
+full$crt4
 
