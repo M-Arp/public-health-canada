@@ -1,3 +1,4 @@
+
 #This script will contain code that prepares the dataset for analysis
 ####This line calls the code that loads the data####
 source('1_data_import.R')
@@ -13,38 +14,47 @@ full %>%
     #We are making the variable know1 using the case_when function
     know1=case_when(
       #when Q14_1 is 1 or 2, then they got the question correct
-      #So when it less than three, it gets a 1
+      #So when it less than 3, it gets a 1
       #separate with a comma
-    Q14_1< 3~ 1,
+    Q14_1<3 ~ 1,
     #When it is greater than 2, it is equal to 0
     # separate with a comma
     Q14_1>2 ~ 0,
     #All other cases
     TRUE ~ 0
   ),
-  know2=case_when(
-    Q14_2 <3~0,
-    Q14_2 >2~1,
-    TRUE ~ 0 
+    know2=case_when(
+      #when Q14_2 is 1 or 2, then they got the question correct
+      #So when it less than 3, it gets a 1
+    Q14_2<3 ~ 1,
+    #When it is greater than 2, it is equal to 0
+    Q14_2>2 ~ 0,
+    TRUE ~ 0
   ),
-  know3=case_when(
-    Q14_3 <3~1,
-    Q14_3 >2~0,
-    TRUE ~ 0 
+    know3=case_when(
+    Q14_3>2 ~ 1,
+    #when Q14_3 is 3 or 4, then they got the question correct
+    #So when it more than 2, it gets a 1
+    Q14_3<3 ~ 0,
+    #when it is less than 3, it is equal to 0
+    TRUE ~ 0
   ),
-  know4=case_when(
-    Q14_4 <3~0,
-    Q14_4 >2~1,
-    TRUE ~ 0 
+    know4=case_when(
+    #when Q14_4 is 3 or 4, then they got the question correct
+    #So when it more than 2, it gets a 1
+    Q14_4>2 ~ 1,
+    #when it is less than 3, it is equal to 0
+    Q14_4<3 ~ 0,
+    TRUE ~ 0  
   )
-
   )->full
 
-#check full$know1
+#check full$know
 full$know1
 full$know2
 full$know3
 full$know4
+
 
 
 #### Next preparation####
@@ -62,80 +72,96 @@ pivot_wider(., names_from=c('name'), values_from='n') %>%
   kable(., format="html") %>% 
   cat(., file=here("Tables", "CRT_responses.html"))
   
-#### What we need to do now is go through each variable Q18_1, Q19_1 and Q20_1 and code a new variable 1, for correct, 0 for not
-#### If the underlying text variable is.
-#### We're going to use the str_detect() function to look for the passages that are correct. 
-#### Look at the table in the folder "Tables/CRT_resopnses.html"
-#### It lists each CRT question, along with each text response and the number of text responses that have been 
-#### proivided for each question. So, 1 was provided 210 times for question Q18_1.
-#### We have to define **each** string found in this table as correct or incorrect. 
-#### The correct answers for each CRT question are, in this order:
-#### Q18: Anything representing two, or second. 
-### Q9 Anything representing seven or seventh
-#### Q20 Anything representing Emily or Emili
-#### If the response is incorrect, it gets 0 if it is correct, it getes a zero
 
-#### You can see what str_detect does this way
-#It just returns TRUE if a variable in Q18 is "1" or not
-str_detect(full$Q18_1, "1")
 
-#### This code brings up a viewer where you can check the results of str_detect. 
-full %>% 
-  filter(str_detect(Q18_1, "1")) %>% 
-  select(Q18_1) %>% 
-  View()
+#Now repeat that code for Q14_2, Q14_3, Q14_4
+#This necessitates reading the text of the questions and setting the conditions <3, > 2 to return the correct value. 
+#You can copy and paste the above code to repeat for Q14_2, Q14_3, Q14_4, but ideally, you would be able to nest it above, inside the mutate() command, so add lines for know2=case_when(), know3=case_when() , etc. etc. 
 
-#### OK, I'm glad I caught that. So, it'ts a bit greedy. Maybe we want to be a little careful. 
-#### str_detect uses "regular expressions" which are ways of capturing strings and patterns in texts. 
-#### You can google aroudn for regular expressions. 
-#### You can match the beginning of a line with the ^ and the end of the line with $
-#### So to match an *exact* string, you can just nest it like this. 
-full %>% 
-  filter(str_detect(Q18_1, "^1$")) %>% 
-  select(Q18_1) %>% 
-  View()
-#### But if we scroll through the results of this, just using the 1, we see that basically it works pretty well
-### It only captures responses that reflect first place. 
-full %>% 
-  filter(str_detect(Q18_1, "1")) %>% 
-  select(Q18_1) %>% 
-  View()
-#### So we are going to put that in as a condition for the first case_when
-#### And it will be set to 0 because that is an incorrect answer.
+#Find the questions on crt
+look_for(full, 'race')
+#Check value labels for Q18
+val_labels(full$Q18_1)
 
 full %>% 
-  mutate(crt1=
-           case_when(
-    ### here we define any case in Q18_1 that has the character 1 (and only 1) as incorrect
-str_detect(Q18_1, "1")~ 0, 
-#### If we go back to the file crt_responses.html the next big response is "2"
-#### So we can match it in the same way. 
-#### But this time, we will return 1 because 2 is a correct answer
-str_detect(Q18_1, "2")~1), 
-#### After doing the responses for Q18_1, we will have to move to Q19_1
-crt2=
-  case_when(
-# This is where we will put the str_detect for the Q19_Question
-    #8 is the correct answer, remember to separate lines with a comma
-str_detect(Q19_1, "8") ~ 1
-# str_detect(Q19_1, )~ 1
-# This bracket closes the crt2 case_when
-), 
-#### This is the code section for Q20_1 and crt3
-crt3=case_when(
-  #### Emily is the correct answer
-  #### Add other tests, remember to separate with a comma.
-str_detect(Q20_1, 'Emily')~ 1
-#This bracket clsoes the crt3 case_when
-)
-#this bracket closes the whole mutate command
-)->full
+  #We are mutating existing variables so the mutate command
+  mutate(
+    #We are making the variable crt1 using the case_when function
+    crt1=case_when(
+     #When it is a variation of 2 or second, it is correct
+      #separate with a comma
+      Q18_1 == 2 ~ 1,
+      Q18_1 == "2 nd" ~ 1,
+      Q18_1 == "2e" ~ 1,
+      Q18_1 == "2eme" ~ 1,
+      Q18_1 == "2 iemes" ~ 1,
+      Q18_1 == "2eme" ~ 1,
+      Q18_1 == "2nd" ~ 1,
+      Q18_1 == "Deuxieme" ~ 1,
+      Q18_1 == "deuxième" ~ 1,
+      Q18_1 == "sec place" ~ 1,
+      Q18_1 == "second" ~ 1,
+      Q18_1 == "Second." ~ 1,
+      Q18_1 == "secondplac" ~ 1,
+      Q18_1 == "2nd place" ~ 1,
+      #All other cases
+      TRUE ~ 0
+    ),
+    crt2=case_when(
+      #When it is a variation of 8 or eight, it is correct
+      Q19_1 == 8 ~ 1,
+      Q19_1 == "8 alive" ~ 1,
+      Q19_1 == "8 left" ~ 1,
+      Q19_1 == "8 moutons" ~ 1,
+      Q19_1 == "8 sheep" ~ 1,
+      Q19_1 == "8 vivants" ~ 1,
+      Q19_1 == "Eight" ~ 1,
+      #All other cases
+      TRUE ~ 0
+    ),
+    crt3=case_when(
+      #When it is a variation of Emily, it is correct
+      Q20_1 == "Emilie" ~ 1,
+      Q20_1 == "Émilie" ~ 1,
+      Q20_1 == "emille" ~ 1,
+      Q20_1 == "Emily" ~ 1,
+      Q20_1 == "Emily 9" ~ 1,
+      Q20_1 == "Emily." ~ 1,
+      Q20_1 == "Emily..." ~ 1,
+      Q20_1 == "Emily27" ~ 1,
+      Q20_1 == "emille" ~ 1,
+      Q20_1 == "Emliy" ~ 1,
+      #All other cases
+      TRUE ~ 0
+    ),
+    crt4=case_when(
+      #When it is a variation of 0 or zero, it is correct
+      Q21_1 == 0 ~ 1,
+      Q21_1 == "0'" ~ 1,
+      Q21_1 == "0 no dirt" ~ 1,
+      Q21_1 == "C’est pad" ~ 1,
+      Q21_1 == "None" ~ 1,
+      Q21_1 == "Zero" ~ 1,
+      Q21_1 == "zero dirt" ~ 1,
+      Q21_1 == "zzero" ~ 1,
+      Q21_1 == "nothing" ~ 1,
+      #All other cases
+      TRUE ~ 0  
+    )
+  )->full
 
-#### Check
-table(full$crt1)
+#check full$crt
+full$crt1
+full$crt2
+full$crt3
+full$crt4
+
 
 #### This code produces a table that compares the results of the text responses with the numeric responses. 
 #### It is a diagnostic tool 
 cat(kable(table(full$Q18_1, full$crt1), format="html"), file=here("Tables", "crt1_diagnostics.html"))
 cat(kable(table(full$Q19_1, full$crt2), format="html"), file=here("Tables", "crt2_diagnostics.html"))
 cat(kable(table(full$Q20_1, full$crt3), format="html"), file=here("Tables", "crt3_diagnostics.html"))
+cat(kable(table(full$Q20_1, full$crt4), format="html"), file=here("Tables", "crt4_diagnostics.html"))
+
+
