@@ -30,8 +30,9 @@ val_labels(full)
 nrow(full)
 
 #### export postal codes####
-full %>% 
-  distinct(Q65_1) %>% 
-  mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>% 
-  select(fsa:fsa2) %>% 
-  write_csv(., file=here("data", "fsa.csv"))
+# full %>% 
+#   distinct(Q65_1) %>% 
+#   mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>% 
+#   select(fsa:fsa2) %>% 
+#   write_csv(., file=here("data", "fsa.csv"))
+
