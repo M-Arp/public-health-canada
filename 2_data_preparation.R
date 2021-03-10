@@ -1,4 +1,3 @@
-
 #This script will contain code that prepares the dataset for analysis
 ####Data Import####
 source('1_data_import.R')
@@ -73,12 +72,6 @@ pivot_wider(., names_from=c('name'), values_from='n') %>%
   kable(., format="html") %>% 
   cat(., file=here("Tables", "CRT_responses.html"))
   
-
-
-#Now repeat that code for Q14_2, Q14_3, Q14_4
-#This necessitates reading the text of the questions and setting the conditions <3, > 2 to return the correct value. 
-#You can copy and paste the above code to repeat for Q14_2, Q14_3, Q14_4, but ideally, you would be able to nest it above, inside the mutate() command, so add lines for know2=case_when(), know3=case_when() , etc. etc. 
-
 #Find the questions on crt
 look_for(full, 'race')
 #Check value labels for Q18
@@ -105,6 +98,16 @@ full %>%
       Q18_1 == "Second." ~ 1,
       Q18_1 == "secondplac" ~ 1,
       Q18_1 == "2nd place" ~ 1,
+      Q18_1 == "2nd Place" ~ 1,
+      Q18_1 == "deuxieme" ~ 1,
+      Q18_1 == "Deuxième" ~ 1,
+      Q18_1 == "DEUXIÈME" ~ 1,
+      Q18_1 == "deuxième8" ~ 1,
+      Q18_1 == "SECOND" ~ 1,
+      Q18_1 == "sexond" ~ 1,
+      Q18_1 == "Second" ~ 1,
+      Q18_1 == "2ieme" ~ 1,
+      Q18_1 == " deuxième" ~ 1, 	
       #All other cases
       TRUE ~ 0
     ),
@@ -117,6 +120,10 @@ full %>%
       Q19_1 == "8 sheep" ~ 1,
       Q19_1 == "8 vivants" ~ 1,
       Q19_1 == "Eight" ~ 1,
+      Q19_1 == "eight" ~ 1,
+      Q19_1 == " 8" ~ 1,
+      Q19_1 == "8 Sheep" ~ 1,
+      Q19_1 == "EIGHT" ~ 1,
       #All other cases
       TRUE ~ 0
     ),
@@ -132,6 +139,17 @@ full %>%
       Q20_1 == "Emily27" ~ 1,
       Q20_1 == "emille" ~ 1,
       Q20_1 == "Emliy" ~ 1,
+      Q20_1 == "Emiky" ~ 1,
+      Q20_1 == "emilie" ~ 1,
+      Q20_1 == "EMILIE" ~ 1,
+      Q20_1 == "émilie" ~ 1,
+      Q20_1 == "ÉMILIE" ~ 1,
+      Q20_1 == "EMILTY" ~ 1,
+      Q20_1 == "eMILY" ~ 1,
+      Q20_1 == "EMILY" ~ 1,
+      Q20_1 == "Emily’s" ~ 1,
+      Q20_1 == "Emilys" ~ 1,
+      Q20_1 == "emily" ~ 1,
       #All other cases
       TRUE ~ 0
     ),
@@ -146,6 +164,9 @@ full %>%
       Q21_1 == "zero dirt" ~ 1,
       Q21_1 == "zzero" ~ 1,
       Q21_1 == "nothing" ~ 1,
+      Q21_1 == "none" ~ 1,
+      Q21_1 == "NONE" ~ 1,
+      Q21_1 == "zero" ~ 1,
       #All other cases
       TRUE ~ 0  
     )
