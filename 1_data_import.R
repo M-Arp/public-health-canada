@@ -15,8 +15,10 @@ list.files(path="./data")
 here()
 #combining here() with 'data' and the file name returns the exact file path whether stored on a PC or Mac
 #Store as full
-full<-read_sav(here('data', 'ORD-571352-N3W7_Final_SPSS_022421.SAV'), encoding="utf8")
-partial<-read_sav(here('data', 'ORD-571352-N3W7_Partial_SPSS_030221.SAV'))
+full<-read_sav(here('data', list.files(path="./data", 'Final.+.SAV')), encoding="utf8")
+partial<-read_sav(here('data', list.files(path="./data", 'Partial.+.SAV')), encoding='utf8')
+
+
 #Check structure
 str(full)
 #View the data

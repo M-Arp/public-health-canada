@@ -30,3 +30,13 @@ ggsave(here("Plots", "responses_per_group_by_day.png"), width=8, height=4)
 
 #### Other categories ####
 table(partial$Q64_6_SP)
+
+
+#### Check Provincial Distribution ####
+look_for(data=partial, 'province')
+partial %>% 
+  group_by(S1) %>% 
+  summarize(n=n()) %>% 
+  as_factor() %>% 
+  kable(., format='html') %>% 
+  cat(., file=here("Tables", "Provincial_distribution.html"))
