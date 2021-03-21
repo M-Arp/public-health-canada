@@ -39,5 +39,24 @@ full %>%
   as_factor() 
 ```
 ## Most Important Problem in Public Health 
-We have provided more meaningful variable names (e.g. `Obesity`, `Vaccine Hesitancy` , etc. ) and *appended* these to the data frame. The original variables are `Q1_1` through `Q1_9`. In addition, we have gone through the open ended responses that respondents provided and added new variables that appeared frequently in the data set. These include: 
+We have provided more meaningful variable names (e.g. `Obesity`, `Vaccine Hesitancy` , etc. ) and *appended* these to the data frame. The original variables are `Q1_1` through `Q1_9`. In addition, we have gone through the open ended responses that respondents provided and added new variables that appeared frequently in the data set. The index currently reads: 
+1 = COVID-19
+2 = Public health messaging/gov't handling of COVID
+3 = Healthcare (access to care, short supply)
+4 = Long term care
+5 = Chronic disease (cancer, heart disease)
+6 = Mental health
+7 = Access to housing and food
+8 = Drug abuse
+9 = Inequality
+10 = Economy
+11 = Corrupt gov't
+12 = Climate change/environmental
+13 = Abortion
+14 = Reliance on meat
+15 = Domestic abuse
+16 = Misinformation
+17 = Internet addiction
+18 = Don't know
+
 
