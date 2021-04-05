@@ -224,6 +224,13 @@ full %>%
   #Bind the columns from the original `full` dataframe and add to them the new variables we just made
   bind_cols(full, .) ->full
 View(full)
+
+names(full)
+full %>% 
+  rename(`Vacc_hesitancy`=`Vaccine hesitancy`, 
+         `Opioid`=`Excessive opioid use`, 
+         `Alcohol`=`Excessive alcohol use`,
+         `Race_inquality`=`Racial inequalities`)->full
 #Check 
 names(full)
 #### This code writes out the spreadsheet with the text responses 
@@ -251,4 +258,93 @@ full %>%
 # 
 # write.xlsx(mip_list, "data/mip_list.xlsx")
 
+#Read in second draft of mip coding
+
+mip<-readWorkbook(xlsxFile="data/mip_list.xlsx", sheet=2)
+mip %>% 
+  select(other_problem_text, category.x)->mip
+#The responses are categorized in other_problem_text
+#The codes are categorized in caegory.x
+names(full)
+full %>%
+  mutate(other_problem_text=tolower(Q1_9_SP)) %>% 
+  full_join(., mip, by="other_problem_text") %>% 
+  rename(.,other_mip=`category.x`)->full
+names(full)
+
+#### Demographics ####
+#Age
+look_for(full, 'year')
+#Q55_1 is the age variable
+#Start with dataframe
+full %>% 
+  #mutate and create a new variable with a meaningful name
+  mutate(old=case_when(
+    #If Q55_1 is greater than 2021-65, then yes, they are "old" , so they get a 1
+    Q55_1<2021-65 ~1,
+    #otherwise they get a zero
+    TRUE~ 0
+  ))->full
+lookfor(full, "province")
+full %>% 
+  mutate(quebec=case_when(
+    S1==13 ~1,
+    TRUE~ 0
+  ))->full
+#Please repeat this for:" 
+
+lookfor(full, "education")
+full %>% 
+  #mutate and create a new variable with a meaningful name
+  #e.g. Is the person "Old" or not? Is the person "Male" or not
+  # e.g. Is the person a "Quebecker or not"
+  mutate(degree=case_when(
+    Q54>6 ~1,
+    #otherwise they get a zero
+    TRUE~ 0
+  ))->full
+# quebec
+full %>% 
+  #mutate and create a new variable with a meaningful name
+  #e.g. Is the person "Old" or not? Is the person "Male" or not
+  # e.g. Is the person a "Quebecker or not"
+  mutate(female=case_when(
+    #If Q55_1 is greater than 2021-65, then yes, they are "old" , so they get a 1
+    Q53==2~1,
+    #otherwise they get a zero
+    TRUE~ 0
+  ))->full
+full$S1
+lookfor(full, "gender")
+lookfor(full, "language")
+full %>% 
+  mutate(francophone=case_when(
+    L1==2~1,
+    TRUE~0
+  ))->full
+
+# Rich
+
+full %>% 
+  mutate(rich=case_when(
+    Q56>5 ~ 1,
+    TRUE~0
+  ))->full
+
+#### Assign Value labels and variable labels ####
+#Ensure the library(labelled) is loaded
+
+names(full)
+#Set the variable label for each variable
+var_label(full$old)<-'Dichotomous variable, R is 65+'
+#Set the value labels for each variable
+val_labels(full$old)<-c(`Over 65`=1, `Under 65`=2)
+
+var_label(full$rich)<-'Dichotomous variable, R household > $100,000'
+
+var_label(full$quebec)<-'R is resident of Quebec'
+
+#### Write out the data save file ####
+names(full)
+#write_sav(full, path="data/recoded_data.sav")
 

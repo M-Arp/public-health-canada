@@ -8,6 +8,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE, echo=F}
 knitr::opts_chunk$set(echo = TRUE, message=F, warning=T, echo=F, cache=T)
+
 ```
 
 
@@ -78,15 +79,6 @@ full %>%
 ## Cognitive Reflection test Questions 
 We have recoded variables Q18_1, Q19_1, Q20_1 and Q21_1 into variables `crt1`, `crt2` etc.such that respondents were coded 1 if they got the correct response and 0 if they were incorrect. 
 
-```
- mutate(
-      crt1=case_when(
-      Q18_1 == X ~ 1,
-      ...
-      TRUE ~ 0
-
-```
-
 CRT Question Q18_1 coded 1 when answer (X) is a variation of "Second Place"
 "If you’re running a race and you pass the person in second place, what place are you in?"
 
@@ -108,23 +100,41 @@ full %>%
 ```
 ## Most Important Problem in Public Health 
 We have provided more meaningful variable names (e.g. `Obesity`, `Vaccine Hesitancy` , etc. ) and *appended* these to the data frame. The original variables are `Q1_1` through `Q1_9`. In addition, we have gone through the open ended responses that respondents provided and added new variables that appeared frequently in the data set. The index currently reads: 
+
 1 = COVID-19
+
 2 = Public health messaging/gov't handling of COVID
+
 3 = Healthcare (access to care, short supply)
+
 4 = Long term care
+
 5 = Chronic disease (cancer, heart disease)
+
 6 = Mental health
+
 7 = Access to housing and food
+
 8 = Drug abuse
+
 9 = Inequality
+
 10 = Economy
+
 11 = Corrupt gov't
+
 12 = Climate change/environmental
+
 13 = Abortion
+
 14 = Reliance on meat
+
 15 = Domestic abuse
+
 16 = Misinformation
+
 17 = Internet addiction
+
 18 = Don't know
 
 
