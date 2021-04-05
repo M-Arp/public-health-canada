@@ -62,9 +62,10 @@ full$know4
 # This code spits out an html table that has all the responses in it. T/here are 229 unique responses. 
 # 
 library(knitr)
+
 full %>% 
-  select(Q18_1:Q20_1) %>% 
-  pivot_longer(cols=1:3) %>% 
+  select(Q18_1:Q21_1) %>% 
+  pivot_longer(cols=1:4) %>% 
   group_by(name, value) %>% 
   summarize(n=n()) %>% 
 pivot_wider(., names_from=c('name'), values_from='n') %>% 
@@ -229,13 +230,25 @@ names(full)
 #Encoding(full$Q1_9_SP)<-'UTF-8'
 #full$Q1_9_SP<-iconv(full$Q1_9_SP, from="UTF-8", to="LATIN1")
 library(readr)
+library(openxlsx)
+full %>%
+  mutate(other_problem_text=tolower(Q1_9_SP)) %>%
+  group_by(other_problem_text) %>%
+  summarize(n=n()) %>%
+  mutate(category=rep("", nrow(.)))->mip
 
-# full %>%
-#   mutate(other_problem_text=tolower(Q1_9_SP)) %>%
-#   group_by(other_problem_text) %>%
-#   summarize(n=n()) %>%
-#   mutate(category=rep("", nrow(.))) %>%
-# REMEMBER TO PUT THE FILENAME BACK IN; THIS IS ONLY FOR SIMON
-#   write_excel_csv(file=here("data", ""))
+###Read in the first draft of coding
+# scott_v1_names<- openxlsx::getSheetNames("data/other_problem_text.xlsx")
+# scott_v1_list <- lapply(scott_v1_names,openxlsx::read.xlsx,xlsxFile="data/other_problem_text.xlsx")
+# names(scott_v1_list) <- scott_v1_names
+# str(scott_v1_list)
+# 
+# scott_v1_list[[2]] %>% 
+#   right_join(., mip, by="other_problem_text") ->mip_version_2
+# str(mip_version_2)
+# mip_version2_list<-list(scott_v1_list, mip_version_2)
+# mip_list<-list(scott_v1_list, mip_version_2)
+# 
+# write.xlsx(mip_list, "data/mip_list.xlsx")
 
 
