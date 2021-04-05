@@ -16,7 +16,7 @@ here()
 #combining here() with 'data' and the file name returns the exact file path whether stored on a PC or Mac
 #Store as full
 full<-read_sav(here('data', list.files(path="./data", 'Final.+.SAV')), encoding="utf8")
-partial<-read_sav(here('data', list.files(path="./data", 'Partial.+.SAV')), encoding='utf8')
+#partial<-read_sav(here('data', list.files(path="./data", 'Partial.+.SAV')), encoding='utf8')
 
 
 #Check structure
@@ -32,9 +32,8 @@ val_labels(full)
 nrow(full)
 
 #### export postal codes####
-# full %>% 
-#   distinct(Q65_1) %>% 
-#   mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>% 
-#   select(fsa:fsa2) %>% 
-#   write_csv(., file=here("data", "fsa.csv"))
-
+full %>%
+  distinct(Q65_1) %>%
+  mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>%
+  select(fsa:fsa2) %>%
+  write_csv(., file=here("data", "fsa.csv"))

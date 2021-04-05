@@ -21,7 +21,51 @@ This document tracks and summarizes basic data wrangling and recodes conducted a
 
 ## Scientific Literacy Questions
 
-We have recoded variables X, Y and Z into variables `know1`, `know2` and `know3` such that respondents were coded 1 if they were correct and 0 if they were incorrect. MATT ADD ANY INFORMATION HERE
+We have recoded variables Q14_1, Q14_2, Q14_3 and Q14_4 into variables `know1`, `know2`, 'know3' and `know4` such that respondents were coded 1 if they were correct and 0 if they were incorrect. 
+
+If Q14_1 = 1 or 2 (Definitely or Probably false), it is correct
+"Ordinary tomatoes do not contain genes, while genetically modified tomatoes do."
+
+
+If Q14_2 = 1 or 2 (Definitely or Probably false), it is correct
+"Antibiotics kill viruses as well as bacteria."
+
+```
+      know1=case_when(
+      Q14_1<3 ~ 1,
+      Q14_1>2 ~ 0,
+      TRUE ~ 0
+
+```
+```
+      know1=case_when(
+      Q14_2<3 ~ 1,
+      Q14_2>2 ~ 0,
+      TRUE ~ 0
+
+```
+
+If Q14_3 = 3 or 4 (Definitely or Probably true), it is correct
+"The cloning of living things produces genetically identical copies."
+
+If Q14_4 = 3 or 4 (Definitely or Probably true), it is correct
+"All plants and animals have DNA."
+
+```
+know3=case_when(
+    Q14_3>2 ~ 1,
+    Q14_3<3 ~ 0,
+    TRUE ~ 0
+
+```
+```
+know3=case_when(
+    Q14_4>2 ~ 1,
+    Q14_4<3 ~ 0,
+    TRUE ~ 0
+
+```
+
 
 ```{r compare-scientific-literacy, results='markup', echo=T}
 
@@ -32,7 +76,31 @@ full %>%
 
 
 ## Cognitive Reflection test Questions 
-We have recoded variables X, Y and Z into variables `crt1`, `crt2` etc.such that respondents were coded 1 if they got the correct response and 0 if they were incorrect. MATT ADD ANY INFORMATION HERE
+We have recoded variables Q18_1, Q19_1, Q20_1 and Q21_1 into variables `crt1`, `crt2` etc.such that respondents were coded 1 if they got the correct response and 0 if they were incorrect. 
+
+```
+ mutate(
+      crt1=case_when(
+      Q18_1 == X ~ 1,
+      ...
+      TRUE ~ 0
+
+```
+
+CRT Question Q18_1 coded 1 when answer (X) is a variation of "Second Place"
+"If you’re running a race and you pass the person in second place, what place are you in?"
+
+CRT Question Q19_1 coded 1 when answer (X) is a variation of "Eight"
+"A farmer had 15 sheep and all but 8 died. How many are left?"
+
+CRT Question Q20_1 coded 1 when answer (X) is a variation of "Emily"
+"Emily’s father has three daughters. The first two are named April and May. What is the third daughter’s name?"
+
+CRT Question Q21_1 coded 1 when answer (X) is a variation of "None"
+"How many cubic feet of dirt are there in a hole that is 3’ deep x 3’ wide x 3’ long?"
+
+
+
 ```{r compare-crt, echo=T}
 full %>% 
   select(Q18_1:Q21_1, starts_with('crt')) %>% 
