@@ -38,6 +38,26 @@ full %>%
   select(Q18_1:Q21_1, starts_with('crt')) %>% 
   as_factor() 
 ```
+```
+##Calculate the mean of knowledge questions and save as "mean_know" variable
+
+full %>%
+  rowwise() %>%
+  summarise(mean_know =mean(c_across(starts_with('know[0-9]')), na.rm=T) -> full
+            
+##Scale know variable from 0-1
+   library(scales)
+   mean_know <-rnorm(2000)
+            
+##Calculate the mean of CRT questions and save as "mean_CRT" variable
+full %>%
+  rowwise() %>%
+  summarise(mean_CRT = mean(c_across(starts_with('CRT[0-9]')), na.rm=T) -> full
+                        
+  ##Scale CRT variable from 0-1
+   library(scales)
+    mean_CRT <-rnorm(2000)
+```
 ## Most Important Problem in Public Health 
 We have provided more meaningful variable names (e.g. `Obesity`, `Vaccine Hesitancy` , etc. ) and *appended* these to the data frame. The original variables are `Q1_1` through `Q1_9`. In addition, we have gone through the open ended responses that respondents provided and added new variables that appeared frequently in the data set. These include: 
 

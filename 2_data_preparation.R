@@ -157,7 +157,25 @@ full$crt2
 full$crt3
 full$crt4
 
+##Calculate the mean of knowledge questions and save as "mean_know" variable
 
+full %>%
+  rowwise() %>%
+  summarise(mean_know =mean(c_across(starts_with('know[0-9]')), na.rm=T) -> full
+            
+##Scale know variable from 0-1
+   library(scales)
+   mean_know <-rnorm(2000)
+            
+##Calculate the mean of CRT questions and save as "mean_CRT" variable
+full %>%
+  rowwise() %>%
+  summarise(mean_CRT = mean(c_across(starts_with('CRT[0-9]')), na.rm=T) -> full
+                        
+  ##Scale CRT variable from 0-1
+   library(scales)
+    mean_CRT <-rnorm(2000)
+    
 #### This code produces a table that compares the results of the text responses with the numeric responses. 
 #### It is a diagnostic tool 
 cat(kable(table(full$Q18_1, full$crt1), format="html"), file=here("Tables", "crt1_diagnostics.html"))
