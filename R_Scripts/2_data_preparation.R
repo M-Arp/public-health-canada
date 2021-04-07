@@ -1,6 +1,7 @@
 #This script will contain code that prepares the dataset for analysis
 ####Data Import####
-source('1_data_import.R')
+library(here)
+source(here('R_Scripts', '1_data_import.R'))
 
 #### Science Literacy ####
 #Find the questions on science literacy
@@ -8,7 +9,7 @@ look_for(full, 'tomatoes')
 #Check value labels for Q14
 val_labels(full$Q14_1)
 
-full %>% 
+full %>%
   #We are mutating existing variables so the mutate command
   mutate(
     #We are making the variable know1 using the case_when function
@@ -45,7 +46,7 @@ full %>%
     Q14_4>2 ~ 1,
     #when it is less than 3, it is equal to 0
     Q14_4<3 ~ 0,
-    TRUE ~ 0  
+    TRUE ~ 0
   )
   )->full
 
@@ -59,26 +60,26 @@ full$know4
 
 #### Cognitive Reflection Questions####
 # We need to code the correct answers to these questions as correct.
-# This code spits out an html table that has all the responses in it. T/here are 229 unique responses. 
-# 
+# This code spits out an html table that has all the responses in it. T/here are 229 unique responses.
+#
 library(knitr)
 
-full %>% 
-  select(Q18_1:Q21_1) %>% 
-  pivot_longer(cols=1:4) %>% 
-  group_by(name, value) %>% 
-  summarize(n=n()) %>% 
-pivot_wider(., names_from=c('name'), values_from='n') %>% 
-  rename(., "response"=1) %>% 
-  kable(., format="html") %>% 
+full %>%
+  select(Q18_1:Q21_1) %>%
+  pivot_longer(cols=1:4) %>%
+  group_by(name, value) %>%
+  summarize(n=n()) %>%
+pivot_wider(., names_from=c('name'), values_from='n') %>%
+  rename(., "response"=1) %>%
+  kable(., format="html") %>%
   cat(., file=here("Tables", "CRT_responses.html"))
-  
+
 #Find the questions on crt
 look_for(full, 'race')
 #Check value labels for Q18
 val_labels(full$Q18_1)
 
-full %>% 
+full %>%
   #We are mutating existing variables so the mutate command
   mutate(
     #We are making the variable crt1 using the case_when function
@@ -108,7 +109,7 @@ full %>%
       Q18_1 == "sexond" ~ 1,
       Q18_1 == "Second" ~ 1,
       Q18_1 == "2ieme" ~ 1,
-      Q18_1 == " deuxième" ~ 1, 	
+      Q18_1 == " deuxième" ~ 1,
       #All other cases
       TRUE ~ 0
     ),
@@ -169,7 +170,7 @@ full %>%
       Q21_1 == "NONE" ~ 1,
       Q21_1 == "zero" ~ 1,
       #All other cases
-      TRUE ~ 0  
+      TRUE ~ 0
     )
   )->full
 
@@ -180,60 +181,60 @@ full$crt3
 full$crt4
 
 
-#### This code produces a table that compares the results of the text responses with the numeric responses. 
-#### It is a diagnostic tool 
+#### This code produces a table that compares the results of the text responses with the numeric responses.
+#### It is a diagnostic tool
 cat(kable(table(full$Q18_1, full$crt1), format="html"), file=here("Tables", "crt1_diagnostics.html"))
 cat(kable(table(full$Q19_1, full$crt2), format="html"), file=here("Tables", "crt2_diagnostics.html"))
 cat(kable(table(full$Q20_1, full$crt3), format="html"), file=here("Tables", "crt3_diagnostics.html"))
 cat(kable(table(full$Q21_1, full$crt4), format="html"), file=here("Tables", "crt4_diagnostics.html"))
 
 #### We need to rename the variables Q1_
-full %>% 
-  select(Q1_1:Q1_9_SP) %>% 
+full %>%
+  select(Q1_1:Q1_9_SP) %>%
  var_label()
 #### Code Public Health Most Important Problem Respones ####
 #### This code below assigns meaningful variable names to the most important problem variables
 
 #Start with the dataframe
-full %>% 
+full %>%
   #Select the most important problem question
-  select(Q1_1:Q1_9) %>% 
+  select(Q1_1:Q1_9) %>%
   #Get the variable labels
-  var_label() %>% 
+  var_label() %>%
   #Stack them
-bind_rows() %>% 
-pivot_longer(cols=everything()) %>% 
-  #This gets the pattern Obesity, VAccine Hesitancy, etc, 
+bind_rows() %>%
+pivot_longer(cols=everything()) %>%
+  #This gets the pattern Obesity, VAccine Hesitancy, etc,
 mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
-  #This delets the remaining - 
+  #This delets the remaining -
   mutate(out=str_replace_all(out, pattern=" -", replace=""),
          #This trims whitespace
-         out=str_trim(out, side='both')) %>% 
+         out=str_trim(out, side='both')) %>%
   #Dump this into a temporary data frame out
   select(out)->out
 #Check
 out$out
 
-#### Assign variable names to the new variables 
+#### Assign variable names to the new variables
 #Start with the data frame
-full %>% 
+full %>%
   #Select the questions that are the most important problem
-  select(Q1_1:Q1_9) %>% 
+  select(Q1_1:Q1_9) %>%
   #Rename them with out$out from above
-  rename_with(~out$out, everything()) %>% 
+  rename_with(~out$out, everything()) %>%
   #Bind the columns from the original `full` dataframe and add to them the new variables we just made
   bind_cols(full, .) ->full
 View(full)
 
 names(full)
-full %>% 
-  rename(`Vacc_hesitancy`=`Vaccine hesitancy`, 
-         `Opioid`=`Excessive opioid use`, 
+full %>%
+  rename(`Vacc_hesitancy`=`Vaccine hesitancy`,
+         `Opioid`=`Excessive opioid use`,
          `Alcohol`=`Excessive alcohol use`,
          `Race_inquality`=`Racial inequalities`)->full
-#Check 
+#Check
 names(full)
-#### This code writes out the spreadsheet with the text responses 
+#### This code writes out the spreadsheet with the text responses
 #Encoding(full$Q1_9_SP)<-'UTF-8'
 #full$Q1_9_SP<-iconv(full$Q1_9_SP, from="UTF-8", to="LATIN1")
 library(readr)
@@ -249,26 +250,26 @@ full %>%
 # scott_v1_list <- lapply(scott_v1_names,openxlsx::read.xlsx,xlsxFile="data/other_problem_text.xlsx")
 # names(scott_v1_list) <- scott_v1_names
 # str(scott_v1_list)
-# 
-# scott_v1_list[[2]] %>% 
+#
+# scott_v1_list[[2]] %>%
 #   right_join(., mip, by="other_problem_text") ->mip_version_2
 # str(mip_version_2)
 # mip_version2_list<-list(scott_v1_list, mip_version_2)
 # mip_list<-list(scott_v1_list, mip_version_2)
-# 
+#
 # write.xlsx(mip_list, "data/mip_list.xlsx")
 
 #Read in second draft of mip coding
 
 mip<-readWorkbook(xlsxFile="data/mip_list.xlsx", sheet=2)
-mip %>% 
+mip %>%
   select(other_problem_text, category.x)->mip
 #The responses are categorized in other_problem_text
 #The codes are categorized in caegory.x
 names(full)
 full %>%
-  mutate(other_problem_text=tolower(Q1_9_SP)) %>% 
-  full_join(., mip, by="other_problem_text") %>% 
+  mutate(other_problem_text=tolower(Q1_9_SP)) %>%
+  full_join(., mip, by="other_problem_text") %>%
   rename(.,other_mip=`category.x`)->full
 names(full)
 
@@ -277,7 +278,7 @@ names(full)
 look_for(full, 'year')
 #Q55_1 is the age variable
 #Start with dataframe
-full %>% 
+full %>%
   #mutate and create a new variable with a meaningful name
   mutate(old=case_when(
     #If Q55_1 is greater than 2021-65, then yes, they are "old" , so they get a 1
@@ -286,15 +287,15 @@ full %>%
     TRUE~ 0
   ))->full
 lookfor(full, "province")
-full %>% 
+full %>%
   mutate(quebec=case_when(
     S1==13 ~1,
     TRUE~ 0
   ))->full
-#Please repeat this for:" 
+#Please repeat this for:"
 
 lookfor(full, "education")
-full %>% 
+full %>%
   #mutate and create a new variable with a meaningful name
   #e.g. Is the person "Old" or not? Is the person "Male" or not
   # e.g. Is the person a "Quebecker or not"
@@ -304,7 +305,7 @@ full %>%
     TRUE~ 0
   ))->full
 # quebec
-full %>% 
+full %>%
   #mutate and create a new variable with a meaningful name
   #e.g. Is the person "Old" or not? Is the person "Male" or not
   # e.g. Is the person a "Quebecker or not"
@@ -317,7 +318,7 @@ full %>%
 full$S1
 lookfor(full, "gender")
 lookfor(full, "language")
-full %>% 
+full %>%
   mutate(francophone=case_when(
     L1==2~1,
     TRUE~0
@@ -325,7 +326,7 @@ full %>%
 
 # Rich
 
-full %>% 
+full %>%
   mutate(rich=case_when(
     Q56>5 ~ 1,
     TRUE~0
@@ -344,7 +345,7 @@ var_label(full$rich)<-'Dichotomous variable, R household > $100,000'
 
 var_label(full$quebec)<-'R is resident of Quebec'
 
-#### Write out the data save file ####
+# #### Write out the data save file ####
 names(full)
 #write_sav(full, path="data/recoded_data.sav")
 

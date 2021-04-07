@@ -12,12 +12,7 @@ output:
 #  word_document: default
   html_document: 
     keep_md: true
-# knit: (function(input, ...) {
-#     rmarkdown::render(
-#       input,
-#       output_dir = here::here("~", "Dropbox", "Public_Health"),
-#     )
-#   })
+
   
 ---
 

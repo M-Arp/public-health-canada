@@ -1,7 +1,7 @@
 #This script compares our genpop sample with 
-source('2_data_preparation.R')
+source(here('R_Scripts', '2_data_preparation.R'))
 #Read in demographic file
-demographics<-read.csv(file="data/canada_demographics_comparison.csv")
+demographics<-read.csv(file=here('data', 'canada_demographics_comparison.csv'))
 
 full %>% 
   filter(phase!=2) %>% 
@@ -19,10 +19,10 @@ bind_rows(., demographics) ->sample_demographics
 sample_demographics %>% 
   pivot_wider(., names_from=c(data_source), values_from=c(percent)) %>% 
   knitr::kable(., format="html") %>% 
-  cat(., file="Tables/comparison_with_census.html")
+  cat(., file=here("Tables", "comparison_with_census.html"))
 sample_demographics %>% 
   ggplot(., aes(x=variable, y=percent, fill=data_source))+geom_col(position="dodge")
 
-ggsave("Plots/sample_census_comparison.png")
+ggsave(here("Plots", "sample_census_comparison.png"))
 
 
