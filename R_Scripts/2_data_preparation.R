@@ -56,7 +56,12 @@ full$know2
 full$know3
 full$know4
 
+##Calculate the mean of knowledge questions and save as "mean_know" variable
 
+full %>%
+mutate(across(starts_with('know'),as.numeric)) %>% 
+  rowwise() %>% 
+  mutate(mean_know=mean(c_across(starts_with('know')))) ->full
 
 #### Cognitive Reflection Questions####
 # We need to code the correct answers to these questions as correct.
@@ -87,6 +92,7 @@ full %>%
      #When it is a variation of 2 or second, it is correct
       #separate with a comma
       Q18_1 == 2 ~ 1,
+      Q18_1 == "2" ~ 1,
       Q18_1 == "2 nd" ~ 1,
       Q18_1 == "2e" ~ 1,
       Q18_1 == "2eme" ~ 1,
@@ -181,17 +187,21 @@ full$crt3
 full$crt4
 
 
+
 #### This code produces a table that compares the results of the text responses with the numeric responses.
 #### It is a diagnostic tool
+
 cat(kable(table(full$Q18_1, full$crt1), format="html"), file=here("Tables", "crt1_diagnostics.html"))
 cat(kable(table(full$Q19_1, full$crt2), format="html"), file=here("Tables", "crt2_diagnostics.html"))
 cat(kable(table(full$Q20_1, full$crt3), format="html"), file=here("Tables", "crt3_diagnostics.html"))
 cat(kable(table(full$Q21_1, full$crt4), format="html"), file=here("Tables", "crt4_diagnostics.html"))
 
-#### We need to rename the variables Q1_
-full %>%
-  select(Q1_1:Q1_9_SP) %>%
- var_label()
+            
+##Calculate the mean of CRT questions and save as "mean_CRT" variable
+full %>% 
+  rowwise() %>% 
+  mutate(mean_crt=mean(c_across(starts_with('crt')))) ->full
+
 #### Code Public Health Most Important Problem Respones ####
 #### This code below assigns meaningful variable names to the most important problem variables
 
@@ -347,5 +357,5 @@ var_label(full$quebec)<-'R is resident of Quebec'
 
 # #### Write out the data save file ####
 names(full)
-#write_sav(full, path="data/recoded_data.sav")
+write_sav(full, path="data/recoded_data.sav")
 

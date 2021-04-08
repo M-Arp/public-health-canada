@@ -76,6 +76,7 @@ full %>%
   as_factor() 
 ```
 
+We have also provided a variable `mean_know` that has the proportion of correct responses (so it runs from 0 to 1) each respondent got. 
 
 ## Cognitive Reflection test Questions 
 We have recoded variables Q18_1, Q19_1, Q20_1 and Q21_1 into variables `crt1`, `crt2` etc.such that respondents were coded 1 if they got the correct response and 0 if they were incorrect. 
@@ -92,13 +93,17 @@ CRT Question Q20_1 coded 1 when answer (X) is a variation of "Emily"
 CRT Question Q21_1 coded 1 when answer (X) is a variation of "None"
 "How many cubic feet of dirt are there in a hole that is 3’ deep x 3’ wide x 3’ long?"
 
-
+You can see the some fo the results of this here:
 
 ```{r compare-crt, echo=F}
 full %>% 
   select(Q18_1:Q21_1, starts_with('crt')) %>% 
   as_factor() 
 ```
+
+We have also provided a variable `mean_crt` that is the proportion of correct responses, again scaled 0 to1.
+
+
 ## Most Important Problem in Public Health 
 We have provided more meaningful variable names (e.g. `Obesity`, `Vaccine Hesitancy` , etc. ) and *appended* these to the dataset. The original variables are `Q1_1` through `Q1_9`. In addition, because respondents were given the option to add `other` open ended responses, we have gone through these and coded these into some meaningful categories. The categories are currently these: 
 
