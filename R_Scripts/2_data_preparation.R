@@ -83,6 +83,7 @@ pivot_wider(., names_from=c('name'), values_from='n') %>%
 look_for(full, 'race')
 #Check value labels for Q18
 val_labels(full$Q18_1)
+look_for(full, 'old')
 
 full %>%
   #We are mutating existing variables so the mutate command
@@ -352,8 +353,14 @@ var_label(full$old)<-'Dichotomous variable, R is 65+'
 val_labels(full$old)<-c(`Over 65`=1, `Under 65`=2)
 
 var_label(full$rich)<-'Dichotomous variable, R household > $100,000'
+val_labels(full$rich)<-c(`Over $100,000`=1, `Under $100,000`=0)
 
-var_label(full$quebec)<-'R is resident of Quebec'
+var_label(full$quebec)<-'Dichotomous variable, R is resident of Quebec'
+val_labels(full$quebec)<-c(`Quebecker`=1, `Outside Quebec`=0)
+
+var_label(full$francophone)<- 'Dichotomous variable, R is francophone'
+val_labels(full$francophone)<-c(`Francophone`=1, `Not Francophone`=0)
+
 
 # #### Write out the data save file ####
 names(full)
