@@ -61,7 +61,8 @@ full$know4
 full %>%
 mutate(across(starts_with('know'),as.numeric)) %>% 
   rowwise() %>% 
-  mutate(mean_know=mean(c_across(starts_with('know')))) ->full
+  mutate(mean_know=mean(c_across(starts_with('know')))) %>% 
+  ungroup()->full
 
 #### Cognitive Reflection Questions####
 # We need to code the correct answers to these questions as correct.
@@ -200,7 +201,29 @@ cat(kable(table(full$Q21_1, full$crt4), format="html"), file=here("Tables", "crt
 ##Calculate the mean of CRT questions and save as "mean_CRT" variable
 full %>% 
   rowwise() %>% 
-  mutate(mean_crt=mean(c_across(starts_with('crt')))) ->full
+  mutate(mean_crt=mean(c_across(starts_with('crt')))) %>% 
+  ungroup()->full
+
+#### Trust Questions ####
+## We are working with Q33to Q36
+
+full %>% 
+  select(Q33:Q36) %>% 
+  val_labels()
+
+#The quickest way to do this is to do the case_when syntax
+# It should look something/ like this:
+#Start with the data frame
+# full %>% 
+#   #Createing a new variable so mutate and trust1 takes on the values spelled out in case_when
+#   mutate(trust_ottawa=case_when(
+#     #If Q33==1, then 0 NOTE: THIS IS JUST HYPOTHETICAL RIGHT NOW, SAMPLE CODE, I NEED YOU TO CHECK EXACTLY WHAT THE RECODES SHOULD BE!
+#     Q33==1 ~ 0,
+#     Q33==2 ~ 0.25,
+#     Q33==3~0.5,
+#   ))->full
+
+# Then we will need to just crib the code above that calculates the mean_know and mean_crt to calculate the mean of trust
 
 #### Code Public Health Most Important Problem Respones ####
 #### This code below assigns meaningful variable names to the most important problem variables
@@ -355,7 +378,12 @@ var_label(full$rich)<-'Dichotomous variable, R household > $100,000'
 
 var_label(full$quebec)<-'R is resident of Quebec'
 
+#### Provide names for trade-off variables
+full %>% 
+  rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_close=Q11_1, seniors_isolation=Q12_1)->full
+
 # #### Write out the data save file ####
 names(full)
-write_sav(full, path="data/recoded_data.sav")
+#write_sav(full, path=paste0("/Users/skiss/Dropbox/Public_Health/Data/recoded_data", "_",Sys.Date(), ".sav"))
+
 
