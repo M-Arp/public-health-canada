@@ -380,7 +380,7 @@ var_label(full$quebec)<-'R is resident of Quebec'
 
 #### Provide names for trade-off variables
 full %>% 
-  rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_close=Q11_1, seniors_isolation=Q12_1)->full
+  rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_open=Q11_1, seniors_isolation=Q12_1)->full
 
 # #### Write out the data save file ####
 names(full)
