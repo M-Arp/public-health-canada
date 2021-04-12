@@ -17,37 +17,37 @@ full %>%
       #when Q14_1 is 1 or 2, then they got the question correct
       #So when it less than 3, it gets a 1
       #separate with a comma
-    Q14_1<3 ~ 1,
-    #When it is greater than 2, it is equal to 0
-    # separate with a comma
-    Q14_1>2 ~ 0,
-    #All other cases
-    TRUE ~ 0
-  ),
+      Q14_1<3 ~ 1,
+      #When it is greater than 2, it is equal to 0
+      # separate with a comma
+      Q14_1>2 ~ 0,
+      #All other cases
+      TRUE ~ 0
+    ),
     know2=case_when(
       #when Q14_2 is 1 or 2, then they got the question correct
       #So when it less than 3, it gets a 1
-    Q14_2<3 ~ 1,
-    #When it is greater than 2, it is equal to 0
-    Q14_2>2 ~ 0,
-    TRUE ~ 0
-  ),
+      Q14_2<3 ~ 1,
+      #When it is greater than 2, it is equal to 0
+      Q14_2>2 ~ 0,
+      TRUE ~ 0
+    ),
     know3=case_when(
-    Q14_3>2 ~ 1,
-    #when Q14_3 is 3 or 4, then they got the question correct
-    #So when it more than 2, it gets a 1
-    Q14_3<3 ~ 0,
-    #when it is less than 3, it is equal to 0
-    TRUE ~ 0
-  ),
+      Q14_3>2 ~ 1,
+      #when Q14_3 is 3 or 4, then they got the question correct
+      #So when it more than 2, it gets a 1
+      Q14_3<3 ~ 0,
+      #when it is less than 3, it is equal to 0
+      TRUE ~ 0
+    ),
     know4=case_when(
-    #when Q14_4 is 3 or 4, then they got the question correct
-    #So when it more than 2, it gets a 1
-    Q14_4>2 ~ 1,
-    #when it is less than 3, it is equal to 0
-    Q14_4<3 ~ 0,
-    TRUE ~ 0
-  )
+      #when Q14_4 is 3 or 4, then they got the question correct
+      #So when it more than 2, it gets a 1
+      Q14_4>2 ~ 1,
+      #when it is less than 3, it is equal to 0
+      Q14_4<3 ~ 0,
+      TRUE ~ 0
+    )
   )->full
 
 #check full$know
@@ -59,7 +59,7 @@ full$know4
 ##Calculate the mean of knowledge questions and save as "mean_know" variable
 
 full %>%
-mutate(across(starts_with('know'),as.numeric)) %>% 
+  mutate(across(starts_with('know'),as.numeric)) %>% 
   rowwise() %>% 
   mutate(mean_know=mean(c_across(starts_with('know')))) ->full
 
@@ -74,7 +74,7 @@ full %>%
   pivot_longer(cols=1:4) %>%
   group_by(name, value) %>%
   summarize(n=n()) %>%
-pivot_wider(., names_from=c('name'), values_from='n') %>%
+  pivot_wider(., names_from=c('name'), values_from='n') %>%
   rename(., "response"=1) %>%
   kable(., format="html") %>%
   cat(., file=here("Tables", "CRT_responses.html"))
@@ -83,13 +83,14 @@ pivot_wider(., names_from=c('name'), values_from='n') %>%
 look_for(full, 'race')
 #Check value labels for Q18
 val_labels(full$Q18_1)
+look_for(full, 'old')
 
 full %>%
   #We are mutating existing variables so the mutate command
   mutate(
     #We are making the variable crt1 using the case_when function
     crt1=case_when(
-     #When it is a variation of 2 or second, it is correct
+      #When it is a variation of 2 or second, it is correct
       #separate with a comma
       Q18_1 == 2 ~ 1,
       Q18_1 == "2" ~ 1,
@@ -196,7 +197,7 @@ cat(kable(table(full$Q19_1, full$crt2), format="html"), file=here("Tables", "crt
 cat(kable(table(full$Q20_1, full$crt3), format="html"), file=here("Tables", "crt3_diagnostics.html"))
 cat(kable(table(full$Q21_1, full$crt4), format="html"), file=here("Tables", "crt4_diagnostics.html"))
 
-            
+
 ##Calculate the mean of CRT questions and save as "mean_CRT" variable
 full %>% 
   rowwise() %>% 
@@ -212,10 +213,10 @@ full %>%
   #Get the variable labels
   var_label() %>%
   #Stack them
-bind_rows() %>%
-pivot_longer(cols=everything()) %>%
+  bind_rows() %>%
+  pivot_longer(cols=everything()) %>%
   #This gets the pattern Obesity, VAccine Hesitancy, etc,
-mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
+  mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
   #This delets the remaining -
   mutate(out=str_replace_all(out, pattern=" -", replace=""),
          #This trims whitespace
@@ -305,6 +306,7 @@ full %>%
 #Please repeat this for:"
 
 lookfor(full, "education")
+
 full %>%
   #mutate and create a new variable with a meaningful name
   #e.g. Is the person "Old" or not? Is the person "Male" or not
@@ -342,6 +344,20 @@ full %>%
     TRUE~0
   ))->full
 
+# Gender
+full %>%
+  mutate(female=case_when(
+    Q53==2~1,
+    TRUE~0
+  ))->full
+
+# Degree
+full %>%
+  mutate(degree=case_when(
+    Q54>6~1,
+    TRUE~0
+  ))->full
+
 #### Assign Value labels and variable labels ####
 #Ensure the library(labelled) is loaded
 
@@ -352,10 +368,21 @@ var_label(full$old)<-'Dichotomous variable, R is 65+'
 val_labels(full$old)<-c(`Over 65`=1, `Under 65`=2)
 
 var_label(full$rich)<-'Dichotomous variable, R household > $100,000'
+val_labels(full$rich)<-c(`Over $100,000`=1, `Under $100,000`=0)
 
-var_label(full$quebec)<-'R is resident of Quebec'
+var_label(full$quebec)<-'Dichotomous variable, R is resident of Quebec'
+val_labels(full$quebec)<-c(`Quebecker`=1, `Outside Quebec`=0)
 
+var_label(full$francophone)<- 'Dichotomous variable, R is francophone'
+val_labels(full$francophone)<-c(`Francophone`=1, `Not Francophone`=0)
+
+var_label(full$female)<- 'R is female'
+val_labels(full$female)<-c(`Female`=1, `Not Female`=0)
+
+var_label(full$degree)<- 'R has a degree'
+val_labels(full$degree)<-c(`Degree`=1, `No Degree`=0)
 # #### Write out the data save file ####
 names(full)
 write_sav(full, path="data/recoded_data.sav")
+
 
