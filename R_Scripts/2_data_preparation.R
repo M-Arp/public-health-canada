@@ -394,3 +394,47 @@ names(full)
 #write_sav(full, path=paste0("/Users/skiss/Dropbox/Public_Health/Data/recoded_data", "_",Sys.Date(), ".sav"))
 
 #### Move files over to Dropbox####
+
+
+####TRUST SCALE####
+
+##Preview variables and labels
+full$Q33
+var_label(full$Q33)
+full$Q34
+var_label(full$Q34)
+full$Q35
+var_label(full$Q35)
+full$Q36
+var_label(full$Q36)
+
+##Mutating variables to be scaled from 0-1
+full %>%
+  mutate(
+    Q33=case_when(
+      #Q33 is scaled from 0-1
+      Q33 ==  1 ~ 0,
+      Q33 ==  2 ~ .25,
+      Q33 ==  3 ~ .5,
+      Q33 ==  4 ~ .75,
+      Q33 ==  5 ~ 1,
+          ),
+    Q34=case_when(
+      #Q34 is scaled from 0-1
+      Q34 == 1 ~ 0,
+      Q34 == 2 ~ .5,
+      Q34 == 3 ~ 1,
+    ),
+    Q35=case_when(
+      #Q35 is scaled from 0-1
+      Q35 == 1 ~ 0,
+      Q35 == 2 ~ 1,
+    ),
+    Q36=case_when(
+      #Q36 is scaled from 0-1
+      Q36 == 1 ~ 0,
+      Q36 == 2 ~ 1,
+    )
+  )->full
+
+####

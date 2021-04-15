@@ -143,4 +143,65 @@ We have provided more meaningful variable names (e.g. `Obesity`, `Vaccine Hesita
 
 18 = Don't know
 
+####TRUST SCALE####
+Q33-36 were scaled from 0-1 using the following code:
+
+Q33: Trust in Government
+Labels:
+ value                  label
+     1                  Never
+     2       Some of the time
+     3 About half of the time
+     4       Most of the time
+     5                 Always
+     
+Q34: Government Waste
+Labels:
+ value                              label
+     1 A lot of the money we pay in taxes
+     2                   Waste some of it
+     3     Or don’t waste very much of it
+     
+Q35: Government Run by...
+Labels:
+ value                                                             label
+     1 Pretty much run by a few big interests looking out for themselves
+     2                             Run for the benefit of all the people
+     
+Q36: Trust in people
+Labels:
+ value                                                label
+     1                           Most people can be trusted
+     2 You need to be very careful when dealing with people
+
+````
+full %>%
+  mutate(
+    Q33=case_when(
+      #Q33 is scaled from 0-1
+      Q33 ==  1 ~ 0,
+      Q33 ==  2 ~ .25,
+      Q33 ==  3 ~ .5,
+      Q33 ==  4 ~ .75,
+      Q33 ==  5 ~ 1,
+          ),
+    Q34=case_when(
+      #Q34 is scaled from 0-1
+      Q34 == 1 ~ 0,
+      Q34 == 2 ~ .5,
+      Q34 == 3 ~ 1,
+    ),
+    Q35=case_when(
+      #Q35 is scaled from 0-1
+      Q35 == 1 ~ 0,
+      Q35 == 2 ~ 1,
+    ),
+    Q36=case_when(
+      #Q36 is scaled from 0-1
+      Q36 == 1 ~ 0,
+      Q36 == 2 ~ 1,
+    )
+  )->full
+  ````
+
 
