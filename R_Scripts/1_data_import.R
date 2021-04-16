@@ -32,5 +32,5 @@ nrow(full)
 full %>%
   distinct(Q65_1) %>%
   mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>%
-  select(fsa:fsa2) %>%
+  select(fsa:fsa2) %>% 
   write_csv(., file=here("data", "fsa.csv"))

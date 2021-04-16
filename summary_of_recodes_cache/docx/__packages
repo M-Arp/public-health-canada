@@ -11,3 +11,5 @@ stringr
 forcats
 haven
 labelled
+knitr
+openxlsx

@@ -2,7 +2,9 @@
 ####Data Import####
 library(here)
 source(here('R_Scripts', '1_data_import.R'))
+#### Some basics####
 
+full$Sample<-car::Recode(as.numeric(full$phase),"2='Public Health'; 1='General Population'")
 #### Science Literacy ####
 #Find the questions on science literacy
 look_for(full, 'tomatoes')
@@ -205,27 +207,69 @@ full %>%
   mutate(mean_crt=mean(c_across(starts_with('crt')))) %>% 
   ungroup()->full
 
-#### Trust Questions ####
-## We are working with Q33to Q36
+####TRUST SCALE####
 
+##Preview variables and labels
+full$Q33
+var_label(full$Q33)
+full$Q34
+var_label(full$Q34)
+full$Q35
+var_label(full$Q35)
+full$Q36
+var_label(full$Q36)
+
+##Mutating variables to be scaled from 0-1
+full %>%
+  mutate(
+    trust_ottawa=case_when(
+      #Q33 is scaled from 0-1
+      Q33 ==  1 ~ 0,
+      Q33 ==  2 ~ .25,
+      Q33 ==  3 ~ .5,
+      Q33 ==  4 ~ .75,
+      Q33 ==  5 ~ 1,
+    ),
+    trust_waste=case_when(
+      #Q34 is scaled from 0-1
+      Q34 == 1 ~ 0,
+      Q34 == 2 ~ .5,
+      Q34 == 3 ~ 1,
+    ),
+    trust_interests=case_when(
+      #Q35 is scaled from 0-1
+      Q35 == 1 ~ 0,
+      Q35 == 2 ~ 1,
+    ),
+    trust_people=case_when(
+      #Q36 is scaled from 0-1
+      Q36 == 1 ~ 0,
+      Q36 == 2 ~ 1,
+    )
+  )->full
+
+#Calculate mean
+#Start with the dataframe
 full %>% 
-  select(Q33:Q36) %>% 
-  val_labels()
-
-#The quickest way to do this is to do the case_when syntax
-# It should look something/ like this:
-#Start with the data frame
-# full %>% 
-#   #Createing a new variable so mutate and trust1 takes on the values spelled out in case_when
-#   mutate(trust_ottawa=case_when(
-#     #If Q33==1, then 0 NOTE: THIS IS JUST HYPOTHETICAL RIGHT NOW, SAMPLE CODE, I NEED YOU TO CHECK EXACTLY WHAT THE RECODES SHOULD BE!
-#     Q33==1 ~ 0,
-#     Q33==2 ~ 0.25,
-#     Q33==3~0.5,
-#   ))->full
-
-# Then we will need to just crib the code above that calculates the mean_know and mean_crt to calculate the mean of trust
-
+  #Work rowwise
+  rowwise() %>% 
+  #mutate, create  anew variable called trust_averaage
+  mutate(trust_average=
+           #It is the product of the average of 
+           mean(
+             #The columns c_across specified in the next row
+             c_across(
+               #starts_with trust
+               starts_with('trust')
+               #Close the brackets
+               )
+             )
+         #save the foregoing
+         )->full
+#Check
+full$trust_average
+full %>% 
+  select(starts_with('trust'))
 #### Code Public Health Most Important Problem Respones ####
 #### This code below assigns meaningful variable names to the most important problem variables
 
@@ -258,7 +302,7 @@ full %>%
   rename_with(~out$out, everything()) %>%
   #Bind the columns from the original `full` dataframe and add to them the new variables we just made
   bind_cols(full, .) ->full
-View(full)
+
 
 names(full)
 full %>%
@@ -384,57 +428,12 @@ val_labels(full$quebec)<-c(`Quebecker`=1, `Outside Quebec`=0)
 var_label(full$francophone)<- 'Dichotomous variable, R is francophone'
 val_labels(full$francophone)<-c(`Francophone`=1, `Not Francophone`=0)
 
-
 #### Provide names for trade-off variables
 full %>% 
   rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_open=Q11_1, seniors_isolation=Q12_1)->full
 
 # #### Write out the data save file ####
-names(full)
-#write_sav(full, path=paste0("/Users/skiss/Dropbox/Public_Health/Data/recoded_data", "_",Sys.Date(), ".sav"))
-
-#### Move files over to Dropbox####
+# names(full)
+#write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
 
 
-####TRUST SCALE####
-
-##Preview variables and labels
-full$Q33
-var_label(full$Q33)
-full$Q34
-var_label(full$Q34)
-full$Q35
-var_label(full$Q35)
-full$Q36
-var_label(full$Q36)
-
-##Mutating variables to be scaled from 0-1
-full %>%
-  mutate(
-    Q33=case_when(
-      #Q33 is scaled from 0-1
-      Q33 ==  1 ~ 0,
-      Q33 ==  2 ~ .25,
-      Q33 ==  3 ~ .5,
-      Q33 ==  4 ~ .75,
-      Q33 ==  5 ~ 1,
-          ),
-    Q34=case_when(
-      #Q34 is scaled from 0-1
-      Q34 == 1 ~ 0,
-      Q34 == 2 ~ .5,
-      Q34 == 3 ~ 1,
-    ),
-    Q35=case_when(
-      #Q35 is scaled from 0-1
-      Q35 == 1 ~ 0,
-      Q35 == 2 ~ 1,
-    ),
-    Q36=case_when(
-      #Q36 is scaled from 0-1
-      Q36 == 1 ~ 0,
-      Q36 == 2 ~ 1,
-    )
-  )->full
-
-####
