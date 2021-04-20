@@ -210,6 +210,8 @@ full %>%
 ####TRUST SCALE####
 
 ##Preview variables and labels
+full$Q32
+var_label(full$Q32)
 full$Q33
 var_label(full$Q33)
 full$Q34
@@ -220,6 +222,15 @@ full$Q36
 var_label(full$Q36)
 
 ##Mutating variables to be scaled from 0-1
+full %>% 
+  mutate(
+    trust_politicians_lie=case_when(
+      Q32==1~1,
+      Q32==2 ~0.66,
+      Q32==3 ~ 0.33,
+      Q32==4~0
+    )
+  )->full
 full %>%
   mutate(
     trust_ottawa=case_when(
@@ -309,7 +320,7 @@ full %>%
   rename(`Vacc_hesitancy`=`Vaccine hesitancy`,
          `Opioid`=`Excessive opioid use`,
          `Alcohol`=`Excessive alcohol use`,
-         `Race_inquality`=`Racial inequalities`)->full
+         `Race_inequality`=`Racial inequalities`)->full
 #Check
 names(full)
 #### This code writes out the spreadsheet with the text responses
@@ -410,6 +421,19 @@ full %>%
     TRUE~0
   ))->full
 
+#### Vaccine Hesitancy #### 
+
+full$Vaccines<-as_factor(full$Q23)
+levels(full$Vaccines)
+full$Vaccines<-fct_relevel(full$Vaccines, "Not Sure", after=2)
+full %>% 
+  mutate(Vaccines=recode(Vaccines, 'I have already been vaccinated'=NA_character_)) ->full
+
+full %>% 
+  filter(!is.na(Vaccines)) %>% 
+  ggplot(., aes(y=Sample, fill=Vaccines))+geom_bar(position="fill")+labs(title="Plans to Vaccinate by Sample")
+ggsave(filename=here("Plots", "vaccine_plans_group.png"), width=8, height=2)
+
 #### Assign Value labels and variable labels ####
 #Ensure the library(labelled) is loaded
 
@@ -427,6 +451,11 @@ val_labels(full$quebec)<-c(`Quebecker`=1, `Outside Quebec`=0)
 
 var_label(full$francophone)<- 'Dichotomous variable, R is francophone'
 val_labels(full$francophone)<-c(`Francophone`=1, `Not Francophone`=0)
+
+
+add_value_labels(full, 
+                 Q30_1=c('Public policy should be based on the best available scientific evidence'=1, 
+                         'Public policy should be determined by many factors including scientific evidence'=7))
 
 #### Provide names for trade-off variables
 full %>% 
