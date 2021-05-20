@@ -517,9 +517,11 @@ add_value_labels(full,
 full<-full %>% 
   rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_open=Q11_1, seniors_isolation=Q12_1)->full
 
+
+
+source('R_scripts/2b_fsa_merge_covid_incidence.R')
+
 #### Write out the data save file ####
 # names(full)
 # table(full$Sample)
-# write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
-
-
+#write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))

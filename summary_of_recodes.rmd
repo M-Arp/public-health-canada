@@ -183,6 +183,20 @@ full %>%
       Q36 == 2 ~ 1,
     )
   )->full
-  ```
+```
+
+#### Covid case counts
+## COVID Case counts
+
+Dr. Tim Gravelle (Survey Monkey and now affiliated with Laurier) helped me merge respondents` FSA with their health regions. With respondents health regions, I was able to draw on [this](https://github.com/ccodwg/Covid19CanadaData) data-set to get several variables of COVID19 severity that you will see in the In the recoded data. They include: 
+    
+```{r echo=F}
+full %>% 
+  select(Comm_Name:case_trend) %>% 
+  names() %>% 
+  kable()
+```
+
+They are pretty self-explanatory, although the variables `Comm_Name` is just the generic name for the community the health region was in; `HR_UID` is a Statistics Canada identifier for health regions, `HR_Name` and `health_region` are both versions of the health region name from the different datasets involved in merging this.But I will point out `case_trend`. It is just the result of the `avgtotal_last7` divided by the `avgtotal_last14`. So, I'm trying to capture the trend of COVID severity. So, if the average number of cases in the respondent's health region was the same in the last seven days as in the previous 14 days, then they would get a 1, so their health region would be stable. But, if the seven day average was double the average 14 day total, then they would get a two, cases would be rising. 
 
 

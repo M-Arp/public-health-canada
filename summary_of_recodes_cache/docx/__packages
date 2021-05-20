@@ -1,5 +1,6 @@
 base
 here
+knitr
 tidyverse
 ggplot2
 tibble
@@ -11,5 +12,6 @@ stringr
 forcats
 haven
 labelled
-knitr
 openxlsx
+Covid19CanadaData
+lubridate

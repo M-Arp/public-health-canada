@@ -27,10 +27,14 @@ library(labelled)
 val_labels(full)
 
 nrow(full)
-
+full$FSA<-toupper(full$Q65_1)
+full$province<-as_factor(full$S1)
+full$date<-as.Date(full$START_DATE)
 #### export postal codes####
-full %>%
-  distinct(Q65_1) %>%
-  mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>%
-  select(fsa:fsa2) %>% 
-  write_csv(., file=here("data", "fsa.csv"))
+# full %>%
+#   distinct(Q65_1) %>%
+#   mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>%
+#   select(fsa:fsa2) %>% 
+#   write_csv(., file=here("data", "fsa.csv"))
+
+
