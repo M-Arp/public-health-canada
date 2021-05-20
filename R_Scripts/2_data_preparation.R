@@ -323,6 +323,7 @@ full %>%
          `Race_inequality`=`Racial inequalities`)->full
 #Check
 names(full)
+
 #### This code writes out the spreadsheet with the text responses
 #Encoding(full$Q1_9_SP)<-'UTF-8'
 #full$Q1_9_SP<-iconv(full$Q1_9_SP, from="UTF-8", to="LATIN1")
@@ -434,6 +435,61 @@ full %>%
   ggplot(., aes(y=Sample, fill=Vaccines))+geom_bar(position="fill")+labs(title="Plans to Vaccinate by Sample")
 ggsave(filename=here("Plots", "vaccine_plans_group.png"), width=8, height=2)
 
+
+#### Assign Variable Labels To Influence Questions #### 
+full %>% 
+  select(num_range('Q3_', 1:7)) %>% 
+  var_label() %>% 
+  bind_rows() %>%
+  pivot_longer(cols=everything()) %>%
+  #This gets the pattern Obesity, VAccine Hesitancy, etc,
+  mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
+  #This delets the remaining -
+  mutate(out=str_replace_all(out, pattern=" -", replace=""),
+         #This trims whitespace
+         out=str_trim(out, side='both'),
+         out=paste(out, " does", sep=""), 
+         out=str_replace_all(out,pattern=" ", replace="_")) %>%
+  #Dump this into a temporary data frame out
+  select(out)->out
+
+out
+
+#Start with the data frame
+full %>%
+  #Select the questions that are the most important problem
+  select(num_range('Q3_', 1:7)) %>%
+  #Rename them with out$out from above
+  rename_with(~out$out, everything()) %>%
+  #Bind the columns from the original `full` dataframe and add to them the new variables we just made
+  bind_cols(full, .) ->full
+
+full %>% 
+  select(num_range('Q4_', 1:7)) %>% 
+  var_label() %>% 
+  bind_rows() %>%
+  pivot_longer(cols=everything()) %>%
+  #This gets the pattern Obesity, VAccine Hesitancy, etc,
+  mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
+  #This delets the remaining -
+  mutate(out=str_replace_all(out, pattern=" -", replace=""),
+         #This trims whitespace
+         out=str_trim(out, side='both'),
+out=paste(out, " should", sep=""), 
+out=str_replace_all(out,pattern=" ", replace="_")) %>%
+  #Dump this into a temporary data frame out
+  select(out)->out
+
+out
+
+#Start with the data frame
+full %>%
+  #Select the questions that are the most important problem
+  select(num_range('Q4_', 1:7)) %>%
+  #Rename them with out$out from above
+  rename_with(~out$out, everything()) %>%
+  #Bind the columns from the original `full` dataframe and add to them the new variables we just made
+  bind_cols(full, .) ->full
 #### Assign Value labels and variable labels ####
 #Ensure the library(labelled) is loaded
 
@@ -458,11 +514,12 @@ add_value_labels(full,
                          'Public policy should be determined by many factors including scientific evidence'=7))
 
 #### Provide names for trade-off variables
-full %>% 
+full<-full %>% 
   rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_open=Q11_1, seniors_isolation=Q12_1)->full
 
-# #### Write out the data save file ####
+#### Write out the data save file ####
 # names(full)
-#write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
+# table(full$Sample)
+# write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
 
 

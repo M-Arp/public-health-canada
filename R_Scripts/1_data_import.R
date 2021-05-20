@@ -15,7 +15,7 @@ list.files(path="./data")
 here()
 #combining here() with 'data' and the file name returns the exact file path whether stored on a PC or Mac
 #Store as full
-full<-read_sav('https://github.com/LISPOP/public-health-canada/raw/main/data/ORD-571352-N3W7_Final_SPSS_032221.SAV', encoding='utf8')
+full<-read_sav('https://github.com/LISPOP/public-health-canada/raw/main/data/ORD-571352-N3W7_Final_SPSS_051821.SAV', encoding='utf8')
 #Check structure
 str(full)
 #View the data

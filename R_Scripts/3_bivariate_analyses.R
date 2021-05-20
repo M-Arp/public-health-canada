@@ -34,7 +34,7 @@ full %>%
   #pivot them longer, except for the Sample variable
 pivot_longer(., cols=-Sample) %>% 
   #Convert to factor
-  as_factor() %>% 
+  #as_factor() %>% 
   #form groups based on the variable Sample and the new variable name, which was created
   #In the pivotting process. 
   group_by(Sample, name) %>% 
@@ -85,7 +85,59 @@ ggsave(here("Plots", "trust_people_group.png"), width=6, height=2)
 ggplot(full, aes(x=trust_average,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(title="Distribution of Average Trust Scores by Sample")
 ggsave(here("Plots", "trust_average_group_density.png"))
+
 #### Ideology ####
 ggplot(full, aes(x=Q51, fill=Sample))+geom_density(alpha=0.5)+labs(title="Self-Reported Ideology by Sample")
 ggsave(here("Plots", "ideology_group_density.png"))
+
+#### Influence #### 
+lookfor(full, "influence")
+full %>% 
+  select(Sample,contains("does")) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+  mutate(name=str_replace_all(name, pattern="_|_|does", replace=" ")) %>% 
+  mutate(name=str_trim(name)) %>% 
+  group_by(Sample, name, value) %>% 
+  summarize(n=n()) %>% 
+  mutate(Percent=n/sum(n)) %>% 
+  filter(value==1) %>% 
+  as_factor() %>% 
+  ggplot(., aes(y=name, x=Percent, fill=Sample))+geom_col(position="dodge")+labs(y="Influence")+scale_fill_discrete(limits=rev)
+ggsave(here("Plots", "influences_do_group.png"), width=6, height=2)
+
+
+#### Influence #### 
+lookfor(full, "influence")
+full %>% 
+  select(Sample,contains("does"), contains("should")) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+  mutate(Condition=case_when(
+str_detect(name, pattern="does") ~ "Does Influence",
+str_detect(name, pattern="should") ~"Should Influence"
+  )) %>% 
+  mutate(name=str_remove_all(name, "_does|_should")) %>% 
+  mutate(name=str_replace_all(name, pattern="_", replace=" ")) %>% 
+  group_by(Sample, Condition, name, value) %>% 
+  summarize(n=n()) %>% 
+  mutate(Percent=(n/sum(n))*100, error=sqrt((Percent*(100-Percent))/n)) %>% 
+  filter(value==1) %>% 
+  as_factor() %>% 
+  ggplot(., aes(y=Sample, x=Percent, fill=Sample, alpha=Condition))+geom_col(position="dodge")+labs(y="Influence")+scale_fill_discrete(limits=rev)+facet_wrap(~str_wrap(name, width=20))+scale_alpha_discrete(limits=rev)+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))
+ggsave(here("Plots", "influences_do_should_policy_sample.png"), width=6, height=2)
+
+full %>% 
+  select(Sample,contains("should")) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+mutate(name=str_replace_all(name, pattern="_|_|should", replace=" ")) %>% 
+  mutate(name=str_trim(name)) %>% 
+  group_by(Sample, name, value) %>% 
+  summarize(n=n()) %>% 
+  mutate(Percent=n/sum(n), error=sqrt((Percent*(1-Percent))/n)) %>% 
+  filter(value==1) %>% 
+  as_factor() %>% 
+  ggplot(., aes(y=name, x=Percent, fill=Sample, group=Sample))+geom_col(position="dodge")+labs(y="Influence")+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))
+
+#ggsave(here("Plots", "influences_should_group.png"), width=6, height=2)
+#### Science Literacy ####
+
 
