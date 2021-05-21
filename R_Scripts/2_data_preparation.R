@@ -1,10 +1,12 @@
 #This script will contain code that prepares the dataset for analysis
 ####Data Import####
 library(here)
+#This runs the data import file, so running this file from top to bottom will import the data as well. 
 source(here('R_Scripts', '1_data_import.R'))
 #### Some basics####
-
+#Recode a sample variable with public health and general popuilation respondents
 full$Sample<-car::Recode(as.numeric(full$phase),"2='Public Health'; 1='General Population'")
+
 #### Science Literacy ####
 #Find the questions on science literacy
 look_for(full, 'tomatoes')
@@ -433,16 +435,18 @@ full %>%
 full %>% 
   filter(!is.na(Vaccines)) %>% 
   ggplot(., aes(y=Sample, fill=Vaccines))+geom_bar(position="fill")+labs(title="Plans to Vaccinate by Sample")
-ggsave(filename=here("Plots", "vaccine_plans_group.png"), width=8, height=2)
+#ggsave(filename=here("Plots", "vaccine_plans_group.png"), width=8, height=2)
 
 
 #### Assign Variable Labels To Influence Questions #### 
+#These questions asked about what does and what should influence public policy
+#This code section takes the variable names from these questions and assigns them to 
 full %>% 
   select(num_range('Q3_', 1:7)) %>% 
   var_label() %>% 
   bind_rows() %>%
   pivot_longer(cols=everything()) %>%
-  #This gets the pattern Obesity, VAccine Hesitancy, etc,
+  #This gets the pattern Scientific Evidence - 
   mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
   #This delets the remaining -
   mutate(out=str_replace_all(out, pattern=" -", replace=""),
@@ -454,7 +458,7 @@ full %>%
   select(out)->out
 
 out
-
+#This code renames the original variables with the value labels stored in out, above. 
 #Start with the data frame
 full %>%
   #Select the questions that are the most important problem
@@ -469,7 +473,7 @@ full %>%
   var_label() %>% 
   bind_rows() %>%
   pivot_longer(cols=everything()) %>%
-  #This gets the pattern Obesity, VAccine Hesitancy, etc,
+  #This gets the pattern scientific evidenc - ,
   mutate(out=str_extract(value, pattern="\\s(.*?)\\s-")) %>%
   #This delets the remaining -
   mutate(out=str_replace_all(out, pattern=" -", replace=""),
@@ -490,9 +494,12 @@ full %>%
   rename_with(~out$out, everything()) %>%
   #Bind the columns from the original `full` dataframe and add to them the new variables we just made
   bind_cols(full, .) ->full
-#### Assign Value labels and variable labels ####
-#Ensure the library(labelled) is loaded
 
+#### Assign Value labels and variable labels ####
+#This code section assigns some value labels and variable labels to new variables 
+# to improve communication with colleagues
+#Ensure the library(labelled) is loaded
+library(labelled)
 names(full)
 #Set the variable label for each variable
 var_label(full$old)<-'Dichotomous variable, R is 65+'
@@ -518,8 +525,11 @@ full<-full %>%
   rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_open=Q11_1, seniors_isolation=Q12_1)->full
 
 
-
-source('R_scripts/2b_fsa_merge_covid_incidence.R')
+#This line executes the file that merges Tim's FSA file with the COVID case count data
+# When troubleshooting the merge script, it is advised to *not* run this line
+# INstead, it is advised to run this full script and then step through the code in 
+# 2b_fsa_merge_covid_incidence.R step by step to see how it works.
+#source('R_scripts/2b_fsa_merge_covid_incidence.R')
 
 #### Write out the data save file ####
 # names(full)

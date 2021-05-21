@@ -1,7 +1,11 @@
 #### Merge Region Health name #### 
-#This file assigns FSAs to health regions with HR_UIDs and Health REgion names
+#install.packages('tidylog')
+#This is a little package that provides diagnostics after merging. 
+library(tidylog) 
+#First we read in Tim's file that used the PCCF+ to assign the FSAs to health regions. 
 ## It is based on code from Tim Gravelle and Laurier's PCCF file, which has to be run elsewhere
-health_regions<-read.csv(file="data/FSA to health region spatial join-2021 03 25.csv")
+health_regions<-read.csv(file="data/FSA to health region spatial join-2021 04 12.csv")
+#These are just some inspections to familiarize with the file. 
 names(health_regions)
 health_regions$HR
 health_regions$HR_NAME
@@ -15,9 +19,12 @@ table(health_regions$PR)
 #### Compare with covid19 dataset####
 #Note, that this is only a moderately well documented package
 #Uncomment and run this to install the COVID19DATA
+
 #devtools::install_github("ccodwg/Covid19CanadaData")
 library(Covid19CanadaData)
+
 #This file has covid case counts for health regions, without HRUIDs
+# But as of May 21, 2021, this was not working at all. 
 #covid<-dl_dataset(uuid='746c01f3-e597-4413-89e0-afa561bf81d8')
 
 #This line downloads the ccodwg timeseries by health region, but it only includes case counts
@@ -27,36 +34,46 @@ library(Covid19CanadaData)
 #This appears to download health canada's comprehensive time series by health region
 #However, this file does not contain the HRUIDs 
 covid<-read_csv(file="https://health-infobase.canada.ca/src/data/covidLive/file_out_v5.csv")
+names(covid)
+#Note that there are no HR_UID numbers in the covid file.
+
+# THE FUNDAMENTAL PROBLEM IS THAT TIM'S FILE HAS THE HRUID BUT THE COVID CASE DATA DOES NOT
+# WE NEED TO ADD THE HRUID TO THE COVID CASE DATA FILE SO THAT WE CAN THEN LINK THE COVID CASE DATA FILE
+# TO THE FSA VIA THE HEALTH REGIONS (HRUID) 
 
 #### Get HHR_UID####
 #This file does have the health region names and the hruids
 hruid<-read_csv(file="https://health-infobase.canada.ca/src/data/covidLive/covid19-healthregions-hruid.csv")
-
-#Merge the HRUID to the ccodwg covid case data.
-#Tim's file already has the hruid
-
-names(covid)
+names(hruid)
+#Some inspections
 names(covid)
 names(hruid)
-covid$province
-names(covid)
-#This merges based on health region name. A good check is if both data sets have "Calgary Zone" in them
+names(health_regions)
+
+# THE NEED TO MERGE BY HR_UID IS  ALSO NECESSARY BECAUSE THE NAMES IN THE FILES ARE DIFFERENT
+# FOR EXAMPLE IN THE covid case set there is this
 covid %>% 
-  filter(str_detect(health_region, 'Calgary'))
+  filter(str_detect(health_region, 'Calgary')) #Calgary
+# IN THE HRUID FILE THERE IS THIS
 hruid%>% 
-  filter(str_detect(health_region, 'Calgary'))
+  filter(str_detect(health_region, 'Calgary')) # Calgary
+#AND IN TIM'S FILE THERE IS THIS. 
 health_regions %>% 
-  filter(str_detect(HR_NAME, "Calgary"))
+  filter(str_detect(HR_NAME, "Calgary")) #Calgary Zone
 #You see the problem.
 # Tim's data has "Caglary Zone"
 #But the CCODWG has "Calgary". But, by adding the hruid to the covid case count data, we should 
 # then be able to merge with Tim's file that contains FSAs and health region data
+
+#THIS MERGES THE COVID FILE WITH THE HRUID FILE BY THE VARIABLE HEALTH_REGION
+
 covid %>% 
   left_join(., hruid, by=c("province"="Province", "health_region"))->covid
 
 names(covid)
 #### PRovince names in Tim's file ####
-#Tim's file did not have province names, which might be necessary 
+#Tim's file did not have province names, which might be necessary
+health_regions$PR
 names(health_regions)
 health_regions %>% 
   mutate(province=case_when(
@@ -75,28 +92,21 @@ health_regions %>%
     PR==62 ~ "Nunavut"
   ))->health_regions
 
-# health_regions %>% 
-#   mutate(prov_hr=str_c(province, health_region, sep=" "))->health_regions
+#This is some checks to see where we are at. 
 names(health_regions)
 health_regions$HR
 health_regions$HR_NAME
 health_regions$HR_UID
 table(health_regions$HR, health_regions$HR_UID)
 
-#This is slimming down Tim's file
+#This slim's down Tim's file
 # I think there are some duplicate values, not sure.
-# It is just linking one single FSA with one single health region
+# Basically, it is just linking one single FSA with one single health region
 
 health_regions %>% 
   select(FSA, Comm_Name, HR_UID, HR_NAME, province) %>% 
   distinct(FSA, .keep_all=T) ->health_regions
-head(health_regions)
-names(health_regions)
-names(full)
-lookfor(full, 'province')
-levels(as_factor(full$S1))
-levels(as_factor(health_regions$province))
-nrow(health_regions)
+
 
 #### Merge full with tim's file####
 #This now merges the full dataset with Tim's FSA file based on province and FSA
@@ -106,6 +116,7 @@ nrow(health_regions)
 full %>% 
   left_join(., health_regions, by=c('province', 'FSA'))->full
 names(full)
+#The diagnostics I am getting suggest that there were 53 rows in the data file 
 #This is a check of 50 random rows
 # full %>% 
 #   select(province, FSA, Comm_Name, HR_UID, HR_NAME) %>% 
@@ -153,11 +164,19 @@ covid %>%
 #This is a test merge that dumps the merge into out.
 full %>% 
   left_join(., covid, by=c('province',"HR_UID", "date" )) ->full
-# 
-# filter(duplicated(CID)) %>% 
-# select(CID,FSA, date,  health_region,avgtotal_last7) %>% 
-#   write_csv(., file="data/duplicates.csv")
 
+#Which of our respondents do not have health region names
+#It looks like there are 
+names(full)
+full %>% 
+  filter(is.na(HR_UID)) %>% 
+  select(HR_UID, Comm_Name, FSA, HR_NAME, cases, date) %>% 
+  View()
+
+# full %>% 
+#   filter(is.na(HR_UID)) %>% 
+#   select(HR_UID, Comm_Name, FSA, HR_NAME, cases, date) %>% 
+#   write_csv(., file=here("data", "missing_health_regions.csv"))
 #### Make trend variable#### 
 full$avgtotal_last14
 full$avgtotal_last7

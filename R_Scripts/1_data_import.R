@@ -1,3 +1,4 @@
+#This script loads the data file that has the survey respondents
 #### Load libraries ####
 library(tidyverse)
 library(haven)
@@ -25,12 +26,18 @@ library(labelled)
 #check value labels
 
 val_labels(full)
-
+#These are some minor transformations
 nrow(full)
+#Provide uppercase FSA variable to match Tim's FSA's file
 full$FSA<-toupper(full$Q65_1)
+#provide province variable as factor
 full$province<-as_factor(full$S1)
+#provide date variable
 full$date<-as.Date(full$START_DATE)
+
 #### export postal codes####
+#This section exports the unique FSAs and were used by Tim to merge FSAs to health regions.
+#It's no longer necessary to run. 
 # full %>%
 #   distinct(Q65_1) %>%
 #   mutate(fsa=tolower(Q65_1), fsa2=toupper(Q65_1)) %>%
