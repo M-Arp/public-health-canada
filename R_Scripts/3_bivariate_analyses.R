@@ -1,7 +1,20 @@
 source('R_Scripts/2_data_preparation.R')
 theme_set(theme_bw())
 
-#### Most Important Problem#### 
+
+####TEST SCRIPTS####
+full$Sample
+lookfor(full, "federal government")
+names (full)
+  full %>%
+    select (contains('Q2'))
+  pivot_longer()
+  
+view()
+
+
+
+###Q1 Most Important Problem#### 
 names(full)
 full %>% 
   select(Sample, Obesity:Race_inequality) %>% 
@@ -13,26 +26,112 @@ full %>%
   filter(value!="Not Selected") %>% 
   ggplot(., aes(y=name, x=pct, fill=Sample))+geom_col(position="dodge")+scale_fill_grey()+labs(title=str_wrap("Percent Selecting Issues as Most Important Public Health Problem After COVID-19", width=40))
 ggsave(here("Plots", "most_important_problem_group.png"), width=6, height=3)
-####  Views on science in policy ####
-lookfor(full, "policy")
-ggplot(full, aes(x=as.numeric(Q30_1), fill=Sample,..scaled..))+
-  geom_density(alpha=0.5)+
-  labs(x="1=Policy Dictated By Best Scientific Evidence\n 7=Policy Determined By Many Factors Including Scientific Evidence")
-ggsave(here("Plots", "science_policy_group.png"))
 
-#### Views on CMOH ####
+
+
+##### Q2 Federal government managing COVID####
+lookfor(full, "federal government")
+full$Q2_1
+ggplot(full, aes(x=Q2_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Very Poorly\n 7=Very Well", title="Satisfaction with Federal Government Preventing the Spread of COVID-19")
+ggsave(here("Plots", "Federal_Government_Satisfaction_COVID_Spread.png"))
+
+full$Q2_2
+ggplot(full, aes(x=Q2_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Very Poorly\n 7=Very Well", title="Satisfaction with Federal Government Ensuring Speedy Access to Vaccines")
+ggsave(here("Plots", "Federal_Government_Satisfaction_Access_Vaccines.png"))
+
+full$Q2_3
+ggplot(full, aes(x=Q2_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Very Poorly\n 7=Very Well", title="Satisfaction with Federal Government Managing Economic Disruptions")
+ggsave(here("Plots", "Federal_Government_Satisfaction_Economic_Disruptions.png"))
+
+#### Q3 Influence #### 
+lookfor(full, "influence")
+full %>% 
+  select(Sample,contains("does"), contains("should")) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+  mutate(Condition=case_when(
+    str_detect(name, pattern="does") ~ "Does Influence",
+    str_detect(name, pattern="should") ~"Should Influence"
+  )) %>% 
+  mutate(name=str_remove_all(name, "_does|_should")) %>% 
+  mutate(name=str_replace_all(name, pattern="_", replace=" ")) %>% 
+  group_by(Sample, Condition, name, value) %>% 
+  summarize(n=n()) %>% 
+  mutate(Percent=(n/sum(n))*100, error=sqrt((Percent*(100-Percent))/n)) %>% 
+  filter(value==1) %>% 
+  as_factor() %>% 
+  ggplot(., aes(y=Sample, x=Percent, fill=Sample, alpha=Condition))+geom_col(position="dodge")+labs(y="Influence")+scale_fill_discrete(limits=rev)+facet_wrap(~str_wrap(name, width=20))+scale_alpha_discrete(limits=rev)+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))
+ggsave(here("Plots", "influences_do_should_policy_sample.png"), width=6, height=2)
+
+full %>% 
+  select(Sample,contains("should")) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+  mutate(name=str_replace_all(name, pattern="_|_|should", replace=" ")) %>% 
+  mutate(name=str_trim(name)) %>% 
+  group_by(Sample, name, value) %>% 
+  summarize(n=n()) %>% 
+  mutate(Percent=n/sum(n), error=sqrt((Percent*(1-Percent))/n)) %>% 
+  filter(value==1) %>% 
+  as_factor() %>% 
+  ggplot(., aes(y=name, x=Percent, fill=Sample, group=Sample))+geom_col(position="dodge")+labs(y="Influence")+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))
+
+#ggsave(here("Plots", "influences_should_group.png"), width=6, height=2)
+
+#### Q4 Influence #### 
+lookfor(full, "influence")
+full %>% 
+  select(Sample,contains("does")) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+  mutate(name=str_replace_all(name, pattern="_|_|does", replace=" ")) %>% 
+  mutate(name=str_trim(name)) %>% 
+  group_by(Sample, name, value) %>% 
+  summarize(n=n()) %>% 
+  mutate(Percent=n/sum(n)) %>% 
+  filter(value==1) %>% 
+  as_factor() %>% 
+  ggplot(., aes(y=name, x=Percent, fill=Sample))+geom_col(position="dodge")+labs(y="Influence")+scale_fill_discrete(limits=rev)
+ggsave(here("Plots", "influences_do_group.png"), width=6, height=2)
+
+#### Q5 Views on CMOH ####
 lookfor(full, "heard")
 full$Q5
 ggplot(full, aes(y=Sample, fill=as_factor(Q5)))+geom_bar(position="fill")+scale_fill_grey(name="Role of Chief Medical Office of Health")
 ggsave(here("Plots", "cmoh_role_group.png"), width=8, height=2)
 
-#### Show differences between genpop and public health on trade-offs ####
+#### Q6 Trust in the Following ####
+lookfor(full, "trust")
+
+
+#### Q7 Rate Groups in terms of how well they prevent spread of COVID####
+
+
+#### Q8 Difference Between Samples and Support For Measures #####
+full %>% 
+  select(starts_with('Q8_'), Sample) %>% 
+  rename(`Mandatory Vaccines`=Q8_1, `Close Bars`=Q8_2, `Fine Non-Maskers`=Q8_3) %>% 
+  pivot_longer(., cols=c(1,2,3)) %>% 
+  #group_by(Sample) %>% 
+  ggplot(., aes(x=name, y=value, fill=as_factor(Sample)))+geom_boxplot()+
+  labs(title="Support For Interventions by Sample", x="Intervention")
+ggsave(here('Plots', 'Interventions_by_sample.png'))
+
+#### Correlation between Vaccine Severity and measures - NOT WORKING #### 
+
+full %>% 
+  select(starts_with('Q8_'), avgtotal_last7, Sample) %>% 
+  pivot_longer(., cols=c(1,2,3)) %>% 
+  # group_by(Sample, name) %>% 
+  ggplot(., aes(x=avgtotal_last7, y=value, col=as_factor(Sample)))+geom_point()+facet_grid(~name)+geom_smooth(method="lm")
+
+#### Q9 Show differences between genpop and public health on trade-offs ####
 #Start with the dataframe
 full %>% 
   #Pick the variables working with
   select(decline_economy:seniors_isolation, Sample) %>% 
   #pivot them longer, except for the Sample variable
-pivot_longer(., cols=-Sample) %>% 
+  pivot_longer(., cols=-Sample) %>% 
   #Convert to factor
   #as_factor() %>% 
   #form groups based on the variable Sample and the new variable name, which was created
@@ -49,24 +148,22 @@ pivot_longer(., cols=-Sample) %>%
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip()
 ggsave(here('Plots', 'trade_off_group.png'), width=6, height=2)
 
-#### Difference Between Samples and Support For Measures
-full %>% 
-  select(starts_with('Q8_'), Sample) %>% 
-  rename(`Mandatory Vaccines`=Q8_1, `Close Bars`=Q8_2, `Fine Non-Maskers`=Q8_3) %>% 
-  pivot_longer(., cols=c(1,2,3)) %>% 
-  #group_by(Sample) %>% 
-  ggplot(., aes(x=name, y=value, fill=as_factor(Sample)))+geom_boxplot()+
-  labs(title="Support For Interventions by Sample", x="Intervention")
-ggsave(here('Plots', 'Interventions_by_sample.png'))
-#### Correlation between Vaccine Severity and measures#### 
+####Q23 Vaccine Hesitancy ####
 
-full %>% 
-  select(starts_with('Q8_'), avgtotal_last7, Sample) %>% 
-  pivot_longer(., cols=c(1,2,3)) %>% 
-  # group_by(Sample, name) %>% 
-  ggplot(., aes(x=avgtotal_last7, y=value, col=as_factor(Sample)))+geom_point()+facet_grid(~name)+geom_smooth(method="lm")
+####Q24 Increasing Federal Power ####
 
-#### Trust ####
+####Q25 Government Priority to ensure speedy recovery####
+
+#### Q30 Views on science in policy ####
+lookfor(full, "policy")
+ggplot(full, aes(x=as.numeric(Q30_1), fill=Sample,..scaled..))+
+  geom_density(alpha=0.5)+
+  labs(x="1=Policy Dictated By Best Scientific Evidence\n 7=Policy Determined By Many Factors Including Scientific Evidence")
+ggsave(here("Plots", "science_policy_group.png"))
+
+####Q31 Experience providing scientific evidence to policymakers####
+
+#### Q32-36 Trust ####
 ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q32)))+geom_bar(position="fill")+labs(y='Sample')+scale_fill_grey(name="Politicians Are Ready to Lie")
 ggsave(here("Plots", "trust_politicians_lie_group.png"), width=6, height=2)
 ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q33)))+geom_bar(position="fill")+labs(y='Sample')+scale_fill_grey(name="Trust in Ottawa")
@@ -80,64 +177,22 @@ ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q36)))+
   geom_bar(position="fill")+labs(y='Sample', title="Trust in People by Sample")+scale_fill_grey(name="Trust in people")
 ggsave(here("Plots", "trust_people_group.png"), width=6, height=2)
 
+####Q37 Individualism #####
 
-#Density plot for distribution of trust scores
-ggplot(full, aes(x=trust_average,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
-  labs(title="Distribution of Average Trust Scores by Sample")
-ggsave(here("Plots", "trust_average_group_density.png"))
+####Q38 Equality & Discrimination####
 
-#### Ideology ####
+
+####Q39 Institutions & Law####
+
+####Q40 Free Will####
+
+
+####Q51 Ideology ####
 ggplot(full, aes(x=Q51, fill=Sample))+geom_density(alpha=0.5)+labs(title="Self-Reported Ideology by Sample")
 ggsave(here("Plots", "ideology_group_density.png"))
 
-#### Influence #### 
-lookfor(full, "influence")
-full %>% 
-  select(Sample,contains("does")) %>% 
-  pivot_longer(., cols=-Sample) %>% 
-  mutate(name=str_replace_all(name, pattern="_|_|does", replace=" ")) %>% 
-  mutate(name=str_trim(name)) %>% 
-  group_by(Sample, name, value) %>% 
-  summarize(n=n()) %>% 
-  mutate(Percent=n/sum(n)) %>% 
-  filter(value==1) %>% 
-  as_factor() %>% 
-  ggplot(., aes(y=name, x=Percent, fill=Sample))+geom_col(position="dodge")+labs(y="Influence")+scale_fill_discrete(limits=rev)
-ggsave(here("Plots", "influences_do_group.png"), width=6, height=2)
 
-
-#### Influence #### 
-lookfor(full, "influence")
-full %>% 
-  select(Sample,contains("does"), contains("should")) %>% 
-  pivot_longer(., cols=-Sample) %>% 
-  mutate(Condition=case_when(
-str_detect(name, pattern="does") ~ "Does Influence",
-str_detect(name, pattern="should") ~"Should Influence"
-  )) %>% 
-  mutate(name=str_remove_all(name, "_does|_should")) %>% 
-  mutate(name=str_replace_all(name, pattern="_", replace=" ")) %>% 
-  group_by(Sample, Condition, name, value) %>% 
-  summarize(n=n()) %>% 
-  mutate(Percent=(n/sum(n))*100, error=sqrt((Percent*(100-Percent))/n)) %>% 
-  filter(value==1) %>% 
-  as_factor() %>% 
-  ggplot(., aes(y=Sample, x=Percent, fill=Sample, alpha=Condition))+geom_col(position="dodge")+labs(y="Influence")+scale_fill_discrete(limits=rev)+facet_wrap(~str_wrap(name, width=20))+scale_alpha_discrete(limits=rev)+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))
-ggsave(here("Plots", "influences_do_should_policy_sample.png"), width=6, height=2)
-
-full %>% 
-  select(Sample,contains("should")) %>% 
-  pivot_longer(., cols=-Sample) %>% 
-mutate(name=str_replace_all(name, pattern="_|_|should", replace=" ")) %>% 
-  mutate(name=str_trim(name)) %>% 
-  group_by(Sample, name, value) %>% 
-  summarize(n=n()) %>% 
-  mutate(Percent=n/sum(n), error=sqrt((Percent*(1-Percent))/n)) %>% 
-  filter(value==1) %>% 
-  as_factor() %>% 
-  ggplot(., aes(y=name, x=Percent, fill=Sample, group=Sample))+geom_col(position="dodge")+labs(y="Influence")+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))
-
-#ggsave(here("Plots", "influences_should_group.png"), width=6, height=2)
-#### Science Literacy ####
-
-
+#####  EXTRA Density plot for distribution of trust scores ####
+ggplot(full, aes(x=trust_average,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(title="Distribution of Average Trust Scores by Sample")
+ggsave(here("Plots", "trust_average_group_density.png"))
