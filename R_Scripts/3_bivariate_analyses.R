@@ -107,17 +107,15 @@ full %>%
   select(Q6_1:Q6_9, Sample) %>% 
   #pivot them longer, except for the Sample variable
   pivot_longer(., cols=-Sample) %>% 
-   group_by(Sample, name) %>% 
+  group_by(Sample, name) %>% 
   #Summarize each group by calculating the mean of value, which was also created 
   #in the pivotting process, and the sd, the sample size, and calculate the se for each
   summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
   ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,5))+
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
-  labs(y="1=Cannot be trusted at all\n 5=Can be trusted a lot", title="How much do you trust each of the following?", x="")
+  labs(y="1=Cannot be trusted at all\n 5=Can be trusted a lot", title="How much do you trust each of the following?", x="")+
+  scale_x_discrete(labels = c("Chief Medical Officer of Health\nin your Province", "Chief Public Health Officer of Canada", "World Health Organization", "United States Centers of Disease\nControl and Prevention", "Chinese Centre for Disease Control\n and Prevention", "Provincial Government", "Federal Government"))
 ggsave(here('Plots', 'trust_groups.png'), width=6, height=2)
-
-## ? ## How to change the x-axis names from Q6_9, Q6_8, etc. to "Chief Medical Officer..."
-
 
 
 #### Q7 Rate Groups in terms of how well they prevent spread of COVID####
@@ -127,17 +125,20 @@ full %>%
   select(Q7_1:Q7_8, Sample) %>% 
   #pivot them longer, except for the Sample variable
   pivot_longer(., cols=-Sample) %>% 
+  #Convert to factor
+  #as_factor() %>% 
+  #form groups based on the variable Sample and the new variable name, which was created
+  #In the pivotting process. 
   group_by(Sample, name) %>% 
   #Summarize each group by calculating the mean of value, which was also created 
   #in the pivotting process, and the sd, the sample size, and calculate the se for each
   summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
   ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,5))+
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
-  labs(y="1=Very poorly \n 5=Very well", title="How would you rate the following groups in preventing the spread of COVID-19?", x="")
+  labs(y="1=Very poorly \n 5=Very well", title="How would you rate the following groups in preventing the spread of COVID-19?", x="") +
+  scale_x_discrete(labels = c("Young People", "Your Neighbours", "Senior Citizens", "Federal Government", "Provincial Government", "Municipal Government", "School Boards", "Public Health Professionals"))
 ggsave(here('Plots', 'groups_preventing_spread.png'), width=6, height=2)
 
-## ? ## How to change the x-axis names from Q7_7, Q7_8, etc. to "Public Health Professionals, etc."
-## ? ## How to fix the title to word wrap
 
 #### Q8 Difference Between Samples and Support For Measures #####
 full %>% 
@@ -183,10 +184,7 @@ ggsave(here('Plots', 'trade_off_group.png'), width=6, height=2)
 ####Q23 Vaccine Hesitancy ####
 lookfor(full, "eligible")
 
-
 ##Need to rescale this... Not entirely sure what to do with 98 and 99 ##
-
-
 
 ####Q24 Increasing Federal Power ####
 lookfor(full, "greater powers")
@@ -202,7 +200,20 @@ ggsave(here("Plots", "Greater_Federal_Powers_Vaccines.png"), width=6, height=2)
 ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q24_4)))+geom_bar(position="fill")+labs(y='Sample')+scale_fill_grey(name="Population mental health")
 ggsave(here("Plots", "Greater_Federal_Powers_Mental_Health.png"), width=6, height=2)
 
+
+
 ####Q25 Government Priority to ensure speedy recovery####
+
+###!!!!!### NEED TO FIX ####
+
+
+lookfor(full, "recovery")
+full$Q25
+ggplot(full, aes(x=as.numeric(Q25), fill=Sample))+
+  geom_bar(aes(y = (..count../sum(..count..))), position = "dodge") +
+  labs(x="")
+ggsave(here("Plots", "Government_Prioritize_Speedy_Recovery"))
+
 
 #### Q30 Views on science in policy ####
 lookfor(full, "policy")
@@ -228,13 +239,64 @@ ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q36)))+
 ggsave(here("Plots", "trust_people_group.png"), width=6, height=2)
 
 ####Q37 Individualism #####
+lookfor(full, "society")
+
+ggplot(full, aes(x=Q37_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="Government programs-not free markets-are the best\nway to supply people with the things they need")
+ggsave(here("Plots", "Government_Programs_Needed_Things.png"))
+
+ggplot(full, aes(x=Q37_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="People who make lots of money have a\nmoral obligation to share it with others")
+ggsave(here("Plots", "Rich_obligation_share.png"))
+
+ggplot(full, aes(x=Q37_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="Sometimes government need to limit people's choices\n(e.g. ban smoking or require seatbelts) to keep them\nfrom hurting themselves")
+ggsave(here("Plots", "Government_limiting_freedom.png"))
+
+ggplot(full, aes(x=Q37_4,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="The government should leave it entirely to the private sector to create jobs")
+ggsave(here("Plots", "Private_sector_jobs.png"))
 
 ####Q38 Equality & Discrimination####
+lookfor(full, "society")
+ggplot(full, aes(x=Q38_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="We need to dramatically reduce inequalities between the rich and the poor")
+ggsave(here("Plots", "dramatically_reduce_inequality.png"))
+
+ggplot(full, aes(x=Q38_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="Discrimination against visible minorities is still\na very serious problem in our society")
+ggsave(here("Plots", "discrimination_against_minorities.png"))
+
+ggplot(full, aes(x=Q38_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="We need to do more to reduce inequalities between men and women")
+ggsave(here("Plots", "Reduce_gender_inequality.png"))
 
 
 ####Q39 Institutions & Law####
+lookfor(full, "society")
+ggplot(full, aes(x=Q39_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="Authorities should impose stricter punishment on those who break the law")
+ggsave(here("Plots", "Impose_stricter_punishment.png"))
+
+ggplot(full, aes(x=Q39_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="Respect for authority should be a fundamental value in our society")
+ggsave(here("Plots", "respect_authority_fundamental.png"))
+
+ggplot(full, aes(x=Q39_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="Compared to regular citizens, First Nations have too many special rights")
+ggsave(here("Plots", "First_nations_rights.png"))
+
 
 ####Q40 Free Will####
+ggplot(full, aes(x=Q40_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="Most of the important things that take place in life happen by random chance")
+ggsave(here("Plots", "Important_things_random.png"))
+ggplot(full, aes(x=Q40_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="The course of our lives is largely determined by forces beyond our control")
+ggsave(here("Plots", "Lives_beyond_control.png"))
+ggplot(full, aes(x=Q40_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
+  labs(x="1=Strongly Disagree\n 7=Strongly Agree", title="The future is too uncertain for people to make ANY long-term plans")
+ggsave(here("Plots", "Future_uncertain.png"))
 
 
 ####Q51 Ideology ####
