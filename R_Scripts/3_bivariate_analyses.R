@@ -260,7 +260,7 @@ ggplot(full, aes(x=as.numeric(Q30_1), fill=Sample,..scaled..))+
   geom_density(alpha=0.5)+
   labs(y="", x="1=Policy Dictated By Best Scientific Evidence\n 7=Policy Determined By Many Factors Including Scientific Evidence", title= str_wrap("How important do you think scientific evidence is in making public policy?", width=60))+
   guides(fill=guide_legend(title=""))
-ggsave(here("Plots", "science_policy_group.png"))
+gsave(here("Plots", "science_policy_group.png"))
 
 ####Q31 Experience providing scientific evidence to policymakers####
 
