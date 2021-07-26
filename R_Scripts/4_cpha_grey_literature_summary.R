@@ -407,3 +407,4 @@ ggplot(full, aes(x=Q51, fill=Sample))+geom_density(alpha=0.5)+labs(y="", x= "0=L
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "ideology_group_density.png"))
 
+
