@@ -24,17 +24,38 @@ ggplot(full, aes(x=Q2_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Federal_Government_Satisfaction_COVID_Spread.png"))
 
+full$Q2_1
+ggplot(full, aes(Q2_1, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government Preventing the Spread of COVID-19", width =60))
+ggsave(here("Plots", "Federal_Government_Satisfaction_COVID_Spread2.png"))
+
 full$Q2_2
 ggplot(full, aes(x=Q2_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government Ensuring Speedy Access to Vaccines", width =60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Federal_Government_Satisfaction_Access_Vaccines.png"))
 
+full$Q2_2
+ggplot(full, aes(Q2_2, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government Ensuring Speedy Access to Vaccines", width =60))
+  ggsave(here("Plots", "Federal_Government_Satisfaction_Access_Vaccines2.png"))
+
 full$Q2_3
 ggplot(full, aes(x=Q2_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Very Poorly\n 7=Very Well", title= str_wrap("Satisfaction with Federal Government Managing Economic Disruptions", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Federal_Government_Satisfaction_Economic_Disruptions.png"))
+
+full$Q2_3
+ggplot(full, aes(Q2_3, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government Managing Economic Disruptions", width =60))
+ggsave(here("Plots", "Federal_Government_Satisfaction_Economic_Disruptions2.png"))
 
 ##### Q2 Significance Tests ####
 wilcox.test(Q2_1 ~ Sample, data=full)
@@ -300,6 +321,7 @@ ggplot(full, aes(x=as.numeric(Q25), fill=Sample))+
 ggsave(here("Plots", "Government_Prioritize_Speedy_Recovery"))
 
 
+
 #### Q30 Views on science in policy ####
 lookfor(full, "policy")
 ggplot(full, aes(x=as.numeric(Q30_1), fill=Sample,..scaled..))+
@@ -307,6 +329,13 @@ ggplot(full, aes(x=as.numeric(Q30_1), fill=Sample,..scaled..))+
   labs(y="", x="1=Policy Dictated By Best Scientific Evidence\n 7=Policy Determined By Many Factors Including Scientific Evidence", title= str_wrap("How important do you think scientific evidence is in making public policy?", width=60))+
   guides(fill=guide_legend(title=""))
 gsave(here("Plots", "science_policy_group.png"))
+
+full$Q30_1
+ggplot(full, aes(Q30_1, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) + scale_fill_brewer(palette="Set1")+ 
+  facet_grid(~Sample)+ theme(legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Policy Dictated By Best Scientific Evidence\n 7=Policy Determined By Many Factors Including Scientific Evidence", title=str_wrap("How important do you think scientific evidence is in making public policy?", width =60))
+ggsave(here("Plots", "science_policy_group2.png"))
 
 ####Q31 Experience providing scientific evidence to policymakers####
 
@@ -335,20 +364,52 @@ ggplot(full, aes(x=Q37_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Government_Programs_Needed_Things.png"))
 
+ggplot(full, aes(Q37_1, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Government programs - not free markets - are the best way to supply people with the things they need", width =60))
+ggsave(here("Plots", "Government_Programs_Needed_Things2.png"))
+
 ggplot(full, aes(x=Q37_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(x="1=Strongly Disagree\n 7=Strongly Agree", title= str_wrap("People who make lots of money have a moral obligation to share it with others", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Rich_obligation_share.png"))
+
+ggplot(full, aes(Q37_2, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("People who make lots of money have a moral obligation to share it with others", width =60))
+ggsave(here("Plots", "Rich_obligation_share2.png"))
+
 
 ggplot(full, aes(x=Q37_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(x="1=Strongly Disagree\n 7=Strongly Agree", title= str_wrap("Sometimes government need to limit people's choices (e.g. ban smoking or require seatbelts) to keep them from hurting themselves", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Government_limiting_freedom.png"))
 
+ggplot(full, aes(Q37_3, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Sometimes government need to limit people's choices (e.g. ban smoking or require seatbelts) to keep them from hurting themselves", width =60))
+ggsave(here("Plots", "Government_limiting_freedom2.png"))
+
 ggplot(full, aes(x=Q37_4,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(x="1=Strongly Disagree\n 7=Strongly Agree", title= str_wrap("The government should leave it entirely to the private sector to create jobs", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Private_sector_jobs.png"))
+
+ggplot(full, aes(Q37_4, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("The government should leave it entirely to the private sector to create jobs", width =60))
+ggsave(here("Plots", "Private_sector_jobs2.png"))
+
+###Significance Testing###
+
+wilcox.test(Q37_1 ~ Sample, data=full)
+wilcox.test(Q37_2 ~ Sample, data=full)
+wilcox.test(Q37_3 ~ Sample, data=full)
+wilcox.test(Q37_4 ~ Sample, data=full)
 
 ####Q38 Equality & Discrimination####
 
@@ -358,16 +419,38 @@ ggplot(full, aes(x=Q38_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "dramatically_reduce_inequality.png"))
 
+ggplot(full, aes(Q38_1, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("We need to dramatically reduce inequalities between the rich and the poor", width =60))
+ggsave(here("Plots", "dramatically_reduce_inequality2.png"))
+
 ggplot(full, aes(x=Q38_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Strongly Disagree\n 7=Strongly Agree", title= str_wrap("Discrimination against visible minorities is still a very serious problem in our society", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "discrimination_against_minorities.png"))
+
+ggplot(full, aes(Q38_2, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Discrimination against visible minorities is still a very serious problem in our society", width =60))
+ggsave(here("Plots", "discrimination_against_minorities2.png"))
 
 ggplot(full, aes(x=Q38_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Strongly Disagree\n 7=Strongly Agree", title= str_wrap("We need to do more to reduce inequalities between men and women", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Reduce_gender_inequality.png"))
 
+ggplot(full, aes(Q38_3, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("We need to do more to reduce inequalities between men and women", width =60))
+ggsave(here("Plots", "Reduce_gender_inequality2.png"))
+
+####Significance Testing####
+wilcox.test(Q38_1 ~ Sample, data=full)
+wilcox.test(Q38_2 ~ Sample, data=full)
+wilcox.test(Q38_3 ~ Sample, data=full)
 
 ####Q39 Institutions & Law####
 lookfor(full, "society")
@@ -376,35 +459,88 @@ ggplot(full, aes(x=Q39_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Impose_stricter_punishment.png"))
 
+ggplot(full, aes(Q39_1, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Authorities should impose stricter punishment on those who break the law", width =60))
+ggsave(here("Plots", "Impose_stricter_punishment2.png"))
+
 ggplot(full, aes(x=Q39_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Respect for authority should be a fundamental value in our society", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "respect_authority_fundamental.png"))
+
+ggplot(full, aes(Q39_2, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Respect for authority should be a fundamental value in our society", width =60))
+ggsave(here("Plots", "respect_authority_fundamental2.png"))
 
 ggplot(full, aes(x=Q39_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Compared to regular citizens, First Nations have too many special rights", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "First_nations_rights.png"))
 
+ggplot(full, aes(Q39_3, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Compared to regular citizens, First Nations have too many special rights", width =60))
+ggsave(here("Plots", "First_nations_rights2.png"))
+
+####Significance Testing####
+wilcox.test(Q39_1 ~ Sample, data=full)
+wilcox.test(Q39_2 ~ Sample, data=full)
+wilcox.test(Q39_3 ~ Sample, data=full)
 
 ####Q40 Free Will####
 ggplot(full, aes(x=Q40_1,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Most of the important things that take place in life happen by random chance", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Important_things_random.png"))
+
+ggplot(full, aes(Q40_1, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("Most of the important things that take place in life happen by random chance", width =60))
+ggsave(here("Plots", "Important_things_random2.png"))
+
 ggplot(full, aes(x=Q40_2,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("The course of our lives is largely determined by forces beyond our control", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Lives_beyond_control.png"))
+
+ggplot(full, aes(Q40_2, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("The course of our lives is largely determined by forces beyond our control", width =60))
+ggsave(here("Plots", "Lives_beyond_control2.png"))
+
 ggplot(full, aes(x=Q40_3,fill=Sample,..scaled..))+geom_density(alpha=0.5)+
   labs(y="", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("The future is too uncertain for people to make ANY long-term plans", width=60))+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "Future_uncertain.png"))
 
+ggplot(full, aes(Q40_3, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme (legend.position = "none)")+
+  labs(y="Percentage of Respondents", x="1=Strongly Disagree\n 7=Strongly Agree", title=str_wrap("The future is too uncertain for people to make ANY long-term plans", width =60))
+ggsave(here("Plots", "Future_uncertain2.png"))
+
+####Significance Testing####
+wilcox.test(Q40_1 ~ Sample, data=full)
+wilcox.test(Q40_2 ~ Sample, data=full)
+wilcox.test(Q40_3 ~ Sample, data=full)
 
 ####Q51 Ideology ####
 ggplot(full, aes(x=Q51, fill=Sample))+geom_density(alpha=0.5)+labs(y="", x= "0=Liberal\n10=Conservative", title="Self-Reported Ideology by Sample")+
   guides(fill=guide_legend(title=""))
 ggsave(here("Plots", "ideology_group_density.png"))
 
+ggplot(full, aes(Q51, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  scale_y_continuous(labels=scales::percent) +
+  facet_grid(~Sample)+ theme (legend.position = "none)")+scale_fill_manual(values = c("#A50026", "#D73027", "#F46D43", "#FDAE61", "#FEE090", "gray80", "#E0F3F8", "#ABD9E9", "#74ADD1", "#4575B4", "#313695")) +
+  labs(y="Percentage of Respondents", x="0=Liberal\n10=Conservative", title=str_wrap("Self-Reported Ideology", width =60))
+ggsave(here("Plots", "ideology_group_density2.png"))
 
+library(RColorBrewer)
+brewer.pal(11, "RdYlBu")
