@@ -182,5 +182,5 @@ full$avgtotal_last14
 full$avgtotal_last7
 full$case_trend<-full$avgtotal_last7/full$avgtotal_last14
 qplot(full$case_trend, geom="histogram", title="Distribution of trend variable")
+names(full)
 
-      

@@ -529,8 +529,9 @@ full<-full %>%
 # When troubleshooting the merge script, it is advised to *not* run this line
 # INstead, it is advised to run this full script and then step through the code in 
 # 2b_fsa_merge_covid_incidence.R step by step to see how it works.
-#source('R_scripts/2b_fsa_merge_covid_incidence.R')
+source('R_scripts/2b_fsa_merge_covid_incidence.R')
 
+names(full)
 #### Write out the data save file ####
 # names(full)
 # table(full$Sample)
