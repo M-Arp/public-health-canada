@@ -364,6 +364,17 @@ full %>%
   full_join(., mip, by="other_problem_text") %>%
   rename(.,other_mip=`category.x`)->full
 names(full)
+#### Pandemic Response Preferences #### 
+#This package provides a useful rescale function that rescales variables to 0 and 1
+#remotes::install_github('sjkiss/skpersonal')
+library(skpersonal)
+summary(revScale(full$Q8_1))
+head(revScale(full$Q8_1))
+library(scales)
+full %>% 
+  ungroup() %>% 
+  mutate(across(starts_with('Q8_'), revScale, .names="{.col}_x")) ->full
+
 
 #### Demographics ####
 #Age
@@ -495,6 +506,42 @@ full %>%
   #Bind the columns from the original `full` dataframe and add to them the new variables we just made
   bind_cols(full, .) ->full
 
+
+
+#This line executes the file that merges Tim's FSA file with the COVID case count data
+# When troubleshooting the merge script, it is advised to *not* run this line
+# INstead, it is advised to run this full script and then step through the code in 
+# 2b_fsa_merge_covid_incidence.R step by step to see how it works.
+source('R_scripts/2b_fsa_merge_covid_incidence.R')
+
+#### Assigning Rural Values ####
+#Draw a histogram of the population density
+
+qplot(full$pop.km2)
+summary(full$pop.km2) #median is at 903
+# mean is at 4593, so there are some huge outliers, very dense populations. 
+full$Sample
+full %>% 
+  filter(Sample=="Public Health") %>% 
+  ggplot(., aes(x=pop.km2))+geom_histogram()
+full %>% 
+  group_by(Sample) %>% 
+  summarize(mean=mean(pop.km2, na.rm=T), median=median(pop.km2, na.rm=T))
+
+full %>% 
+  filter(pop.km2<25000) %>% 
+  ggplot(., aes(x=pop.km2))+geom_histogram()+facet_grid(~Sample)
+
+# First Cut Rural < 2500 people per square km urban > 2500 people per square km
+
+full %>% 
+  mutate(rural=case_when(
+    pop.km2 < 2500 ~ 1,
+    pop.km2 > 2499 ~ 0,
+    TRUE ~ NA_real_
+  ))->full
+
+
 #### Assign Value labels and variable labels ####
 #This code section assigns some value labels and variable labels to new variables 
 # to improve communication with colleagues
@@ -519,20 +566,13 @@ val_labels(full$francophone)<-c(`Francophone`=1, `Not Francophone`=0)
 add_value_labels(full, 
                  Q30_1=c('Public policy should be based on the best available scientific evidence'=1, 
                          'Public policy should be determined by many factors including scientific evidence'=7))
+val_labels(full$rural)<-c('Rural'=1, `Not Rural`=0)
 
 #### Provide names for trade-off variables
 full<-full %>% 
   rename(., decline_economy=Q9_1, social_isolation=Q10_1, schools_open=Q11_1, seniors_isolation=Q12_1)->full
-
-
-#This line executes the file that merges Tim's FSA file with the COVID case count data
-# When troubleshooting the merge script, it is advised to *not* run this line
-# INstead, it is advised to run this full script and then step through the code in 
-# 2b_fsa_merge_covid_incidence.R step by step to see how it works.
-source('R_scripts/2b_fsa_merge_covid_incidence.R')
-
-names(full)
 #### Write out the data save file ####
 # names(full)
 # table(full$Sample)
-#write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
+# write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
+
