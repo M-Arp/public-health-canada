@@ -1,5 +1,9 @@
 source('R_Scripts/2_data_preparation.R')
 theme_set(theme_minimal())
+# install.packages("crosstable")
+# library(crosstable)
+# install.packages("gmodels")
+# library(gmodels)
 
 ###Q1 Most Important Problem#### 
 names(full)
@@ -376,37 +380,45 @@ aggregate(full$Q30_1, list(full$Sample), FUN=mean)
 
 #### Q32-36 Trust ####
 
-ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q32)))+geom_bar(position="fill")+
-  labs(y="", x="")+scale_fill_manual(values = c("dark red", "tomato", "royal blue", "dark blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Politicians are ready to lie to get elected", width = 60 )) +guides(fill = guide_legend(reverse=TRUE))
-ggsave(here("Plots", "trust_politicians_lie_group.png"))
+full %>% 
+  select(trust_politicians_lie:trust_people, Sample) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+  group_by(Sample, name) %>% 
+  summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
+  ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(0,1))+
+  geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
+  labs(y="0=Less Trusting\n 1= More Trusting", title=str_wrap("Trust Measures", width=40), x="")+
+  scale_x_discrete(labels = c("Politicians", "Federal Government", "Wasteful Government Spending", "Democracy", "Other People"))
+ggsave(here('Plots', 'Means_Trust.png'))
+
+# ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q32)))+geom_bar(position="fill")+
+#   labs(y="", x="")+scale_fill_manual(values = c("dark red", "tomato", "royal blue", "dark blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Politicians are ready to lie to get elected", width = 60 )) +guides(fill = guide_legend(reverse=TRUE))
+# ggsave(here("Plots", "trust_politicians_lie_group.png"))
 
 CrossTable(full$Q32, full$Sample)
 aggregate(full$Q32, list(full$Sample), FUN=mean)
 
-ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q33)))+geom_bar(position="fill")+
-  labs(y="", x="")+scale_fill_manual(values = c("dark red", "tomato", "gray", "royal blue", "dark blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("How much of the time do you think you can trust the government in Ottawa to do what is right", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
-ggsave(here("Plots", "trust_ottawa_group.png"))
+# ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q33)))+geom_bar(position="fill")+
+#   labs(y="", x="")+scale_fill_manual(values = c("dark red", "tomato", "gray", "royal blue", "dark blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("How much of the time do you think you can trust the government in Ottawa to do what is right", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
+# ggsave(here("Plots", "trust_ottawa_group.png"))
 
 aggregate(full$Q33, list(full$Sample), FUN=mean)
 
-
-
-
-ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q34)))+geom_bar(position="fill")+
-  labs(y="", x="")+scale_fill_manual(values = c("tomato", "gray", "royal blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Do you think that people in government waste:", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
-ggsave(here("Plots", "trust_taxes_group.png"))
+# ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q34)))+geom_bar(position="fill")+
+#   labs(y="", x="")+scale_fill_manual(values = c("tomato", "gray", "royal blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Do you think that people in government waste:", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
+# ggsave(here("Plots", "trust_taxes_group.png"))
 
 aggregate(full$Q34, list(full$Sample), FUN=mean)
 
-ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q35)))+geom_bar(position="fill")+
-  labs(y="", x="")+scale_fill_manual(values = c("tomato", "royal blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Would you say the government is...", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
-ggsave(here("Plots", "trust_interests_group.png"))
+# ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q35)))+geom_bar(position="fill")+
+#   labs(y="", x="")+scale_fill_manual(values = c("tomato", "royal blue") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Would you say the government is...", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
+# ggsave(here("Plots", "trust_interests_group.png"))
 
 aggregate(full$Q35, list(full$Sample), FUN=mean)
 
-ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q36)))+geom_bar(position="fill")+
-  labs(y="", x="")+scale_fill_manual(values = c("royal blue", "tomato") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Generally speaking, would you say that most people can be trusted", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
-ggsave(here("Plots", "trust_people_group.png"))
+# ggplot(full, aes(y=as.factor(Sample), fill=as_factor(Q36)))+geom_bar(position="fill")+
+#   labs(y="", x="")+scale_fill_manual(values = c("royal blue", "tomato") ,(name=""))+theme(legend.position = "bottom")+labs (title= str_wrap("Generally speaking, would you say that most people can be trusted", width = 60 ))+guides(fill = guide_legend(reverse=TRUE))
+# ggsave(here("Plots", "trust_people_group.png"))
 
 aggregate(full$Q35, list(full$Sample), FUN=mean)
 
@@ -642,3 +654,5 @@ check %>%
   scale_y_continuous(labels=scales::percent) +
   facet_grid(Sample~name, labeller=labeller(name=labels))+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme(legend.position = "none)")+
   labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government...", width =60))
+
+
