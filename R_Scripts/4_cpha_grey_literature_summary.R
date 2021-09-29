@@ -268,9 +268,10 @@ full %>%
   # and replace the last pipe with a save out -> to some object 
   # like trade_off_Sample
   # But here we are just going right to graph. 
-  ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
-  geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip()+
-  labs(y="1=Stopping the spread of COVID-19 \n 10=Other considerations", x="", title= str_wrap("In public health, it is often important to decide between accomplishing multiple outcomes, which outcome is more important to you ", width=60)) +
+  ggplot(., aes(x=average, y=fct_recode(name, "Reduce Social Isoation"="social_isolation", "Reduce Seniors' Isolation"="seniors_isolation", "Keep Schools Open"="schools_open","Prevent Economic Decline"="decline_economy" ), col=Sample))+geom_point()+xlim(c(1,10))+
+  geom_errorbar(aes(xmin=average-(1.96*se), xmax=average+(1.96*se)), width=0)+
+  labs(x="1=Stopping the spread of COVID-19 \n 10=Other considerations", y="Policy", title= str_wrap("In public health, it is often important to decide between accomplishing multiple outcomes, which outcome is more important to you?", width=60))
+
 ggsave(here('Plots', 'trade_off_group.png'))
 
 lookfor(full, "decline")
