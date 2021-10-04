@@ -104,14 +104,13 @@ rlang::last_error()
 
 ####Q3 Influences that should affecting government decision-making ####
 
-#### Q5 Views on CMOH ####
-####NEED TO MUTATE X AXIS *100 FOR %
-lookfor(full, "heard")
-full$Q5
-ggplot(full, aes(y=Sample, fill=as_factor(Q5)))+theme(legend.position = "bottom")+geom_bar(position="fill")+scale_fill_brewer(palette= "Set1", name="Role of Chief Medical Office of Health")+
-  labs(y="", x="", title= str_wrap("In your view, which of the following best describes the role of your provincial Chief Medical Officer", width=60))+
-  guides(fill=guide_legend(title="", ncol=2, byrow=TRUE))
-ggsave(here("Plots", "cmoh_role_group.png"))
+# ####NEED TO MUTATE X AXIS *100 FOR %
+# lookfor(full, "heard")
+# full$Q5
+# ggplot(full, aes(y=Sample, fill=as_factor(Q5)))+theme(legend.position = "bottom")+geom_bar(position="fill")+scale_fill_brewer(palette= "Set1", name="Role of Chief Medical Office of Health")+
+#   labs(y="", x="", title= str_wrap("In your view, which of the following best describes the role of your provincial Chief Medical Officer", width=60))+
+#   guides(fill=guide_legend(title="", ncol=2, byrow=TRUE))
+# ggsave(here("Plots", "cmoh_role_group.png"))
 
 ###Version 2????
 full %>% 
@@ -630,30 +629,52 @@ aggregate(full$Q51, list(full$Sample), FUN=mean)
 
 ####Creating merged Charts ###
 
-full %>% 
-  select(Sample, starts_with('Q2_')) ->check
-check
-check %>% 
-  pivot_longer(cols=-Sample)->check
-check
-check %>%
-  ggplot(., aes(x=value, group=Sample))+ geom_bar(aes(y = ..prop.., fill = Sample), stat="count", position="dodge") + 
-  scale_y_continuous(labels=scales::percent) +
-  facet_wrap(~name, ncol=3)+
-  labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government...", width =60))
+# full %>% 
+#   select(Sample, starts_with('Q2_')) ->check
+# check
+# check %>% 
+#   pivot_longer(cols=-Sample)->check
+# check
+# check %>%
+#   ggplot(., aes(x=value, group=Sample))+ geom_bar(aes(y = ..prop.., fill = Sample), stat="count", position="dodge") + 
+#   scale_y_continuous(labels=scales::percent) +
+#   facet_wrap(~name, ncol=3)+
+#   labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government...", width =60))
+
+# full %>% 
+#   select(Sample, starts_with('Q2_')) ->check 
+# check
+# check %>% 
+#   pivot_longer(cols=-Sample)->check
+# check
+# 
+# labels <-c(Q2_1 = "Preventing the Spread\n of COVID-19", Q2_2 = "Ensuring Speedy Access\n to Vaccines", Q2_3 = "Managing Economic\n Disruptions")
+# check %>%
+#   ggplot(., aes(x=value, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+#   scale_y_continuous(labels=scales::percent) +
+#   facet_grid(Sample~name, labeller=labeller(name=labels))+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme(legend.position = "none)")+
+#   labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government...", width =60))
+
+###Generating an age variable based on the ANES Standard
+lookfor(full, "year")
+full$age <- (2021 - full$Q55_1)
+lookfor(full, "age")
+CrossTable(full$age, full$Sample)
+
+full$agegrp[full$age > 64] <-"Age 65+"
+full$agegrp[full$age > 50 & full$age < 65] <-"Age 51-64"
+full$agegrp[full$age > 34 & full$age < 51] <-"Age 35-50"
+full$agegrp[full$age > 17 & full$age < 36] <-"Age 18-34"
+full$agegrp[full$age < 18] <-"Age < 18"
+full$agegrp
+CrossTable(full$agegrp, full$Sample)
 
 full %>% 
-  select(Sample, starts_with('Q2_')) ->check 
-check
-check %>% 
-  pivot_longer(cols=-Sample)->check
-check
-
-labels <-c(Q2_1 = "Preventing the Spread\n of COVID-19", Q2_2 = "Ensuring Speedy Access\n to Vaccines", Q2_3 = "Managing Economic\n Disruptions")
-check %>%
-  ggplot(., aes(x=value, group = Sample)) + geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
-  scale_y_continuous(labels=scales::percent) +
-  facet_grid(Sample~name, labeller=labeller(name=labels))+scale_fill_manual(values = c("dark red", "red2", "tomato", "grey60", "royal blue", "blue2", "dark blue"))+ theme(legend.position = "none)")+
-  labs(y="Percentage of Respondents", x="1=Very Poorly\n 7=Very Well", title=str_wrap("Satisfaction with Federal Government...", width =60))
-
-
+  select(Q51, Sample) %>% 
+  pivot_longer(., cols=-Sample) %>% 
+  group_by(Sample, name) %>% 
+  summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
+  ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(0,10))+
+  geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
+  labs(y="0=Liberal\n10=Conservative", title=str_wrap("Political Ideology", width=40), x="")+
+  scale_x_discrete(labels = c("", "", ""))
