@@ -985,4 +985,3 @@ full%>%
   labs(y="0=Liberal\n10=Conservative", title=str_wrap("Political Ideology by Age Group", width=40), x="")+
   scale_x_discrete(labels = c("Under 50", "50 and up"))+
   ggsave(here("Plots", "ideology_group_Mean_age2.png"))
-
