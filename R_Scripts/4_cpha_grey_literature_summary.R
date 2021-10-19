@@ -658,8 +658,9 @@ aggregate(full$Q51, list(full$Sample), FUN=mean)
 
 #Q1 Most Important Problem
 full %>% 
-  select(Obesity:Race_inequality, age_4) %>% 
-  pivot_longer(-age_4) %>% 
+  #Must select Sample as wel!!!!!
+  select(Sample, Obesity:Race_inequality, age_4) %>% 
+  pivot_longer(-age_4, -Sample) %>% 
   group_by(age_4, name, value) %>%
   as_factor() %>% 
   summarize(n=n()) %>% 

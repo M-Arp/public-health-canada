@@ -210,6 +210,9 @@ full %>%
   rowwise() %>% 
   mutate(mean_crt=mean(c_across(starts_with('crt')))) %>% 
   ungroup()->full
+#### Ideology ####
+full %>%
+  mutate(Ideology=skpersonal::revScale(Q51))->full
 
 ####TRUST SCALE####
 
@@ -418,12 +421,11 @@ full%>%
     Age > 49 ~ 2
   ))->full
 
+
 var_label(full$age_2)<-'Age Category (2), R Age'
 val_labels(full$age_2)<-c('Age 50+' = 2, 'Age 18-49' = 1)
 
 names(full)
-
-lookfor(full, "province")
 
 full %>%
   mutate(quebec=case_when(
@@ -431,7 +433,7 @@ full %>%
     TRUE~ 0
   ))->full
 
-full$Age<-2021-full$Q55_1
+
 #Please repeat this for:"
 
 lookfor(full, "education")
