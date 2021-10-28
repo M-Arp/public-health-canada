@@ -667,6 +667,7 @@ full$Rural1<-as_factor(full$rural)
 full$Francophone1<-as_factor(full$francophone)
 full$Degree1<-as_factor(full$degree)
 full$Female1<-as_factor(full$female)
+full$age_2_1<-as_factor(full$age_2)
 
 names(full)
 
