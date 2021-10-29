@@ -656,7 +656,7 @@ aggregate(full$Q51, list(full$Sample), FUN=mean)
 
 ####GENERATIONAL DIVIDE####
 
-CrossTable(full$Sample, full$age_2)
+CrossTable(full$Sample, full$age_2_1)
 tabyl(full, Sample, Rural1)
 
 by(full$Age, full$Sample, mean)
@@ -678,41 +678,41 @@ by(full$Age, full$Sample, mean)
 #   guides(fill=guide_legend(title=""))+facet_grid(~age_4)
 
 full %>% 
-  select(Sample, Obesity:Race_inequality, age_2) %>% 
-  pivot_longer(-c(age_2, Sample)) %>% 
-  group_by(Sample, age_2, name, value) %>%
+  select(Sample, Obesity:Race_inequality, age_2_1) %>% 
+  pivot_longer(-c(age_2_1, Sample)) %>% 
+  group_by(Sample, age_2_1, name, value) %>%
   as_factor() %>% 
   summarize(n=n()) %>% 
   mutate(pct=n/sum(n)*100) %>% 
   filter(value!="Not Selected") %>% 
   filter(!is.na(pct)) %>% 
-  filter(!is.na(age_2)) %>% 
+  filter(!is.na(age_2_1)) %>% 
   ggplot(., aes(y=name, x=pct, fill=Sample))+ geom_col(position="dodge")+theme(legend.position = "bottom")+
   labs(y="", x="Percentage", title=str_wrap("Issue as Most Important Public Health Problem After COVID-19", width=60))+
-  guides(fill=guide_legend(title=""))+facet_grid(~age_2)+
+  guides(fill=guide_legend(title=""))+facet_grid(~age_2_1)+
   ggsave(here('Plots', 'Most_Important_Problem_age2.png'))
 
 ###Q2: Combined
 full %>% 
-  select(Q2_1:Q2_3, Sample, age_2) %>% 
-  pivot_longer(-c(age_2,Sample)) %>% 
-  group_by(Sample, name, age_2) %>% 
+  select(Q2_1:Q2_3, Sample, age_2_1) %>% 
+  pivot_longer(-c(age_2_1,Sample)) %>% 
+  group_by(Sample, name, age_2_1) %>% 
   summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
   ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
   labs(y="1=Very Poorly\n 7=Very Well", title=str_wrap("Indicate how well you think the Federal Government has done...", width=60), x="")+
-  scale_x_discrete(labels = c("Preventing the Spread of COVID-19", "Ensuring Speedy Access to Vaccines", "Managing Economic Disruptions"))+facet_grid(~age_2)+
+  scale_x_discrete(labels = c("Preventing the Spread of COVID-19", "Ensuring Speedy Access to Vaccines", "Managing Economic Disruptions"))+facet_grid(~age_2_1)+
   ggsave(here('Plots', 'Means_Satisfaction_Federal_Government_by_Age2.png'))
 
-aggregate(full$Q2_2, list(full$Sample, full$age_2), FUN=mean)
+aggregate(full$Q2_2, list(full$Sample, full$age_2_1), FUN=mean)
 
 #Q2 Federal Government Satisfaction: Spread of COVID
 # full%>% 
-#   select(Sample, age_2, Q2_1:Q2_3) %>% 
-#   pivot_longer(-c(age_2, Sample)) %>% 
-#   group_by(Sample, age_2, name, value) %>% 
+#   select(Sample, age_2_1, Q2_1:Q2_3) %>% 
+#   pivot_longer(-c(age_2_1, Sample)) %>% 
+#   group_by(Sample, age_2_1, name, value) %>% 
 #   summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
-#   filter(!is.na(age_2)) %>% 
+#   filter(!is.na(age_2_1)) %>% 
 #   ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Very Poorly\n 7=Very Well", title=str_wrap("How well you think the federal government has done preventing the spread of COVID-19 infections?", width=50), x="")+
@@ -730,10 +730,10 @@ aggregate(full$Q2_2, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Satisfaction_Federal_Government_Spread_by_Age4.png'))
 
 # full%>% 
-#   select(Sample, age_2, Q2_1) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q2_1) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q2_1), sd=sd(Q2_1), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Very Poorly\n 7=Very Well", title=str_wrap("How well you think the federal government has done preventing the spread of COVID-19 infections?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -751,10 +751,10 @@ aggregate(full$Q2_2, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Satisfaction_Federal_Government_Vaccines_by_Age4.png'))
 
 # full%>% 
-#   select(Sample, age_2, Q2_2) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q2_2) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q2_2), sd=sd(Q2_2), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Very Poorly\n 7=Very Well", title=str_wrap("How well you think the federal government has done ensuring speedy access to vaccines as they become available?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -772,10 +772,10 @@ aggregate(full$Q2_2, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Satisfaction_Federal_Government_Economy_by_Age4.png'))
 # 
 # full%>% 
-#   select(Sample, age_2, Q2_3) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q2_3) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q2_3), sd=sd(Q2_3), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Very Poorly\n 7=Very Well", title=str_wrap("How well you think the federal government has done managing the economic disruptions associated with the pandemic?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -784,17 +784,17 @@ aggregate(full$Q2_2, list(full$Sample, full$age_2), FUN=mean)
 ###Q8 Combined
 
 full %>% 
-  select(Q8_1:Q8_3, Sample, age_2) %>% 
-  pivot_longer(-c(age_2,Sample)) %>% 
-  group_by(Sample, name, age_2) %>% 
+  select(Q8_1:Q8_3, Sample, age_2_1) %>% 
+  pivot_longer(-c(age_2_1,Sample)) %>% 
+  group_by(Sample, name, age_2_1) %>% 
   summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
   ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
   labs(y="1=Strongly Oppose\n 7=Strongly Support", title=str_wrap("How strongly do you support or oppose the following to contain the COVID-19 pandemic in the short-term", width=60), x="")+
-  scale_x_discrete(labels = c("It should be mandatory for all residents \n in Canada to get a vaccine that has been \napproved by Health Canada", "Bars and restaurants should be closed down", "People not wearing masks in public, \nindoor places should be fined"))+facet_grid(~age_2)+
+  scale_x_discrete(labels = c("It should be mandatory for all residents \n in Canada to get a vaccine that has been \napproved by Health Canada", "Bars and restaurants should be closed down", "People not wearing masks in public, \nindoor places should be fined"))+facet_grid(~age_2_1)+
   ggsave(here('Plots', 'Means_Support_by_Age2.png'))
 
-aggregate(full$Q8_1, list(full$Sample, full$age_2), FUN=mean)
+aggregate(full$Q8_1, list(full$Sample, full$age_2_1), FUN=mean)
 
 #Q8 Policy Preferences: Vaccines
 # full%>%
@@ -808,10 +808,10 @@ aggregate(full$Q8_1, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Support_Vaccines_Age4.png'))
 
 # full%>%
-#   select(Sample, age_2, Q8_1) %>%
-#   group_by(Sample, age_2) %>%
+#   select(Sample, age_2_1, Q8_1) %>%
+#   group_by(Sample, age_2_1) %>%
 #   summarize(average=mean(Q8_1), sd=sd(Q8_1), n=n(), se=sd/sqrt(n)) %>%
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Strongly Oppose\n 7=Strongly Support", title=str_wrap("It should be mandatory for all residents in Canada to get a vaccine that has been approved by Health Canada", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -829,10 +829,10 @@ aggregate(full$Q8_1, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Support_Closures_Age4.png'))
 
 # full%>% 
-#   select(Sample, age_2, Q8_2) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q8_2) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q8_2), sd=sd(Q8_2), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Strongly Oppose\n 7=Strongly Support", title=str_wrap("Bars and restaurants should be closed down", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -850,10 +850,10 @@ aggregate(full$Q8_1, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Support_Masks_Age4.png'))
 # 
 # full%>% 
-#   select(Sample, age_2, Q8_3) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q8_3) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q8_3), sd=sd(Q8_3), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,7))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Strongly Oppose\n 7=Strongly Support", title=str_wrap("People not wearing masks in public, indoor places should be fined", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -862,17 +862,17 @@ aggregate(full$Q8_1, list(full$Sample, full$age_2), FUN=mean)
 ###Q9 Combined
 
 full %>% 
-  select(decline_economy:seniors_isolation, Sample, age_2) %>% 
-  pivot_longer(-c(age_2,Sample)) %>% 
-  group_by(Sample, name, age_2) %>% 
+  select(decline_economy:seniors_isolation, Sample, age_2_1) %>% 
+  pivot_longer(-c(age_2_1,Sample)) %>% 
+  group_by(Sample, name, age_2_1) %>% 
   summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
   ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
   labs(y="1=Stopping the spread of the COVID-19 virus \n 10=Other considerations, even if more people get infected", title=str_wrap("How strongly do you support or oppose the following to contain the COVID-19 pandemic in the short-term", width=60), x="")+
-  scale_x_discrete(labels = c("Prevent Economic Decline", "Keep Schools Open", "Reduce Seniors' Isolation", "Reduce Social Isolation"))+facet_grid(~age_2)+
+  scale_x_discrete(labels = c("Prevent Economic Decline", "Keep Schools Open", "Reduce Seniors' Isolation", "Reduce Social Isolation"))+facet_grid(~age_2_1)+
   ggsave(here('Plots', 'Means_Tradeoff_by_Age2.png'))
 
-aggregate(full$decline_economy, list(full$Sample, full$age_2), FUN=mean)
+aggregate(full$decline_economy, list(full$Sample, full$age_2_1), FUN=mean)
 
 #Q9 Trade Off: Economic Decline
 # full%>% 
@@ -886,10 +886,10 @@ aggregate(full$decline_economy, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'trade_off_economy_age4.png'))
 # 
 # full%>% 
-#   select(Sample, age_2, decline_economy) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, decline_economy) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(decline_economy), sd=sd(decline_economy), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Stopping the spread of the COVID-19 virus, even if the economy gets worse. \n 10=Stopping the decline of the economy, even if more people get infected by COVID-19", title=str_wrap("In public health, it is often important to decide between accomplishing multiple outcomes, which outcome is more important to you?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -907,10 +907,10 @@ aggregate(full$decline_economy, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'trade_off_social_age4.png'))
 # 
 # full%>% 
-#   select(Sample, age_2, social_isolation) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, social_isolation) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(social_isolation), sd=sd(social_isolation), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Stopping the spread of the COVID-19 virus, even if people suffer from social isolation \n 10=Giving people a reprieve from social isolation, even if more people get infected by COVID-19", title=str_wrap("In public health, it is often important to decide between accomplishing multiple outcomes, which outcome is more important to you?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -930,10 +930,10 @@ aggregate(full$decline_economy, list(full$Sample, full$age_2), FUN=mean)
 # 
 # 
 # full%>% 
-#   select(Sample, age_2, schools_open) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, schools_open) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(schools_open), sd=sd(schools_open), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Stopping the spread of the COVID-19 virus even if it means schools have to close \n 10=Keeping schools open even if this means more people get infected by COVID-19", title=str_wrap("In public health, it is often important to decide between accomplishing multiple outcomes, which outcome is more important to you?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -951,10 +951,10 @@ aggregate(full$decline_economy, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'trade_off_seniors_age4.png'))
 # 
 # full%>% 
-#   select(Sample, age_2, seniors_isolation) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, seniors_isolation) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(seniors_isolation), sd=sd(seniors_isolation), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Stopping the spread of the COVID-19 virus even if it means isolation of seniors in long-term care centers \n 10=Relaxing social distancing in long-term care centers even if it means more people get infected by COVID-19", title=str_wrap("In public health, it is often important to decide between accomplishing multiple outcomes, which outcome is more important to you?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -963,17 +963,17 @@ aggregate(full$decline_economy, list(full$Sample, full$age_2), FUN=mean)
 #Q24 Federal Powers
 
 full %>% 
-  select(Q24_1:Q24_4, Sample, age_2) %>% 
-  pivot_longer(-c(age_2,Sample)) %>% 
-  group_by(Sample, name, age_2) %>% 
+  select(Q24_1:Q24_4, Sample, age_2_1) %>% 
+  pivot_longer(-c(age_2_1,Sample)) %>% 
+  group_by(Sample, name, age_2_1) %>% 
   summarize(average=mean(value), sd=sd(value), n=n(), se=sd/sqrt(n)) %>% 
   ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
   labs(y="1=Strongly Disagree\n 4=Strongly Agree", title=str_wrap("Would you disagree or agree to giving the federal government greater powers to do the following even if it would mean acting in an area of provincial responsibility?", width=60), x="")+
-  scale_x_discrete(labels = c("Monitoring the spread of diseases", "Emergency response", "Control over vaccine supply chain","Population mental health"))+facet_grid(~age_2)+
+  scale_x_discrete(labels = c("Monitoring the spread of diseases", "Emergency response", "Control over vaccine supply chain","Population mental health"))+facet_grid(~age_2_1)+
   ggsave(here('Plots', 'Means_Federal_Powers_age2.png'))
 
-aggregate(full$Q24_1, list(full$Sample, full$age_2), FUN=mean)
+aggregate(full$Q24_1, list(full$Sample, full$age_2_1), FUN=mean)
 
 
 #Q24 Increasing Federal Power: Monitoring the spread of diseases
@@ -988,10 +988,10 @@ aggregate(full$Q24_1, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Federal_Powers_Monitoring_Age4.png'))
 
 # full%>% 
-#   select(Sample, age_2, Q24_1) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q24_1) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q24_1), sd=sd(Q24_1), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Strongly Disagree\n 4=Strongly Agree", title=str_wrap("Would you disagree or agree to giving the federal government greater powers monitoring the spread of diseases even if it would mean acting in an area of provincial responsibility?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -1009,10 +1009,10 @@ aggregate(full$Q24_1, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Federal_Powers_Response_Age4.png'))
 
 # full%>% 
-#   select(Sample, age_2, Q24_2) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q24_2) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q24_2), sd=sd(Q24_2), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Strongly Disagree\n 4=Strongly Agree", title=str_wrap("Would you disagree or agree to giving the federal government greater emergency response powers even if it would mean acting in an area of provincial responsibility?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -1030,10 +1030,10 @@ aggregate(full$Q24_1, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Federal_Powers_Vaccines_Age4.png'))
 
 # full%>% 
-#   select(Sample, age_2, Q24_3) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q24_3) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q24_3), sd=sd(Q24_3), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Strongly Disagree\n 4=Strongly Agree", title=str_wrap("Would you disagree or agree to giving the federal government greater control over vaccine supply chain even if it would mean acting in an area of provincial responsibility?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
@@ -1051,17 +1051,17 @@ aggregate(full$Q24_1, list(full$Sample, full$age_2), FUN=mean)
 #   ggsave(here('Plots', 'Means_Federal_Powers_Mental_Age4.png'))
 
 # full%>% 
-#   select(Sample, age_2, Q24_4) %>% 
-#   group_by(Sample, age_2) %>% 
+#   select(Sample, age_2_1, Q24_4) %>% 
+#   group_by(Sample, age_2_1) %>% 
 #   summarize(average=mean(Q24_4), sd=sd(Q24_4), n=n(), se=sd/sqrt(n)) %>% 
-#   ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
+#   ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(1,4))+
 #   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
 #   labs(y="1=Strongly Disagree\n 4=Strongly Agree", title=str_wrap("Would you disagree or agree to giving the federal government greater control over population mental health even if it would mean acting in an area of provincial responsibility?", width=50), x="")+
 #   scale_x_discrete(labels = c("Under 50", "50 and up"))+
 #   ggsave(here('Plots', 'Means_Federal_Powers_Mental_Age2.png'))
 
 ###Q25 Speedy Recovery Combined
-
+#Overall
 full %>% 
   select(Sample, Q25) %>%
   mutate(Role=as_factor(Q25)) %>% group_by(Sample, Role) %>% 
@@ -1070,15 +1070,15 @@ full %>%
   ggplot(., aes(y=Role, x=Percent, fill=Sample))+geom_bar(position="dodge", stat="identity")+labs(y="", x="", title= str_wrap("What should governments prioritize to ensure a speedy recovery?", width=40))
 ggsave(here("Plots", "Government_Recovery.png"), width=8, height=3)
 
+#By Age
 full %>% 
-  select(Sample, Q25, age_2) %>%
+  select(Sample, Q25, age_2_1) %>%
   mutate(Role=as_factor(Q25)) %>% 
-  group_by(Sample, Role, age_2) %>% 
+  group_by(Sample, age_2_1, Role) %>% 
   summarize(n=n()) %>% 
   mutate(Percent=(n/sum(n))*100) %>% 
-  ggplot(., aes(y=Role, x=Percent, fill=Sample))+geom_bar(position="dodge", stat="identity")+labs(y="", x="", title= str_wrap("What should governments prioritize to ensure a speedy recovery?", width=40))+facet_grid(~age_2)
+  ggplot(., aes(y=Role, x=Percent, fill=Sample))+geom_bar(position="dodge", stat="identity")+labs(y="", x="", title= str_wrap("What should governments prioritize to ensure a speedy recovery?", width=40))+facet_grid(~age_2_1)
 ggsave(here("Plots", "Government_Recovery_age2.png"), width=8, height=3)
-
 
 #Q51 Political Ideology
 # full%>% 
@@ -1092,22 +1092,22 @@ ggsave(here("Plots", "Government_Recovery_age2.png"), width=8, height=3)
 #   ggsave(here("Plots", "ideology_group_Mean_age4.png"))
 
 full%>% 
-  select(Sample, age_2, Q51) %>% 
-  group_by(Sample, age_2) %>% 
+  select(Sample, age_2_1, Q51) %>% 
+  group_by(Sample, age_2_1) %>% 
   summarize(average=mean(Q51), sd=sd(Q51), n=n(), se=sd/sqrt(n)) %>% 
-  ggplot(., aes(x=age_2, y=average, col=Sample))+geom_point()+ylim(c(0,10))+
+  ggplot(., aes(x=age_2_1, y=average, col=Sample))+geom_point()+ylim(c(0,10))+
   geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
   labs(y="0=Liberal\n10=Conservative", title=str_wrap("Political Ideology by Age Group", width=40), x="")+
   scale_x_discrete(labels = c("Under 50", "50 and up"))+
   ggsave(here("Plots", "ideology_group_Mean_age2.png"))
 
-aggregate(full$Q51, list(full$Sample, full$age_2), FUN=mean)
+aggregate(full$Q51, list(full$Sample, full$age_2_1), FUN=mean)
 
 ####Rural and Urban Divide####
 
 CrossTable(full$Sample, full$Rural1)
 
-tabyl(full, Sample, age_2, Poverty)
+tabyl(full, Sample, age_2_1, Poverty)
 
 #Q1 Most Important Problem
 
@@ -1198,7 +1198,7 @@ aggregate(full$Q24_4, list(full$Sample, full$Rural1), FUN=mean)
 full %>% 
   select(Sample, Q25, Rural1) %>%
   mutate(Role=as_factor(Q25)) %>% 
-  group_by(Sample, Role, Rural1) %>% 
+  group_by(Sample, Rural1, Role) %>% 
   summarize(n=n()) %>% 
   filter(!is.na(Rural1)) %>%
   mutate(Percent=(n/sum(n))*100) %>% 
