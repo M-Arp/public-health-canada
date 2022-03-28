@@ -692,6 +692,21 @@ full %>%
   guides(fill=guide_legend(title=""))+facet_grid(~age_2_1)+
   ggsave(here('Plots', 'Most_Important_Problem_age2.png'))
 
+full %>% 
+  select(Sample, Obesity:Race_inequality, age_2_1) %>% 
+  pivot_longer(-c(age_2_1, Sample)) %>% 
+  group_by(Sample, age_2_1, name, value) %>%
+  as_factor() %>% 
+  summarize(n=n()) %>% 
+  mutate(pct=n/sum(n)*100) %>% 
+  filter(value!="Not Selected") %>% 
+  filter(!is.na(pct)) %>% 
+  filter(!is.na(age_2_1)) %>% 
+  ggplot(., aes(y=age_2_1, x=pct, fill=Sample))+ geom_col(position="dodge")+theme(legend.position = "bottom")+
+  labs(y="", x="Percentage", title=str_wrap("Issue as Most Important Public Health Problem After COVID-19", width=60))+
+  guides(fill=guide_legend(title=""))+facet_wrap(~name)+
+  ggsave(here('Plots', 'Most_Important_Problem_age2.png'))
+
 ###Q2: Combined
 full %>% 
   select(Q2_1:Q2_3, Sample, age_2_1) %>% 
