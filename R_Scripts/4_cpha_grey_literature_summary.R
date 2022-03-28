@@ -692,6 +692,21 @@ full %>%
   guides(fill=guide_legend(title=""))+facet_grid(~age_2_1)+
   ggsave(here('Plots', 'Most_Important_Problem_age2.png'))
 
+full %>% 
+  select(Sample, Obesity:Race_inequality, age_2_1) %>% 
+  pivot_longer(-c(age_2_1, Sample)) %>% 
+  group_by(Sample, age_2_1, name, value) %>%
+  as_factor() %>% 
+  summarize(n=n()) %>% 
+  mutate(pct=n/sum(n)*100) %>% 
+  filter(value!="Not Selected") %>% 
+  filter(!is.na(pct)) %>% 
+  filter(!is.na(age_2_1)) %>% 
+  ggplot(., aes(y=age_2_1, x=pct, fill=Sample))+ geom_col(position="dodge")+theme(legend.position = "bottom")+
+  labs(y="", x="Percentage", title=str_wrap("Issue as Most Important Public Health Problem After COVID-19", width=60))+
+  guides(fill=guide_legend(title=""))+facet_wrap(~name)+
+  ggsave(here('Plots', 'Most_Important_Problem_age2.png'))
+
 ###Q2: Combined
 full %>% 
   select(Q2_1:Q2_3, Sample, age_2_1) %>% 
@@ -1220,4 +1235,47 @@ full%>%
 
 aggregate(full$Q51, list(full$Sample, full$Rural1), FUN=mean)
 
+full%>% 
+  select(Sample, Rural1, Q51) %>% 
+  group_by(Sample, Rural1) %>% 
+  summarize(average=mean(Q51), sd=sd(Q51), n=n(), se=sd/sqrt(n)) %>% 
+  filter(!is.na(Rural1)) %>%
+  ggplot(., aes(x=Rural1, y=average, col=Sample))+geom_point()+ylim(c(0,10))+
+  geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip() +
+  labs(y="0=Liberal\n10=Conservative", title=str_wrap("Political Ideology by Rural-Urban Classification", width=60), x="")+
+  scale_x_discrete(labels = c("Not Rural", "Rural"))+
+  ggsave(here("Plots", "ideology_group_Mean_Rural.png"))
 
+look_for(full, 'provincial')
+
+full%>%
+  table(Prov_Employee, Rural1)
+
+CrossTable(full$Q62, full$Q6_8)
+
+
+
+table(full$Prov_Employee, full$Q6_8)
+
+CrossTable(full$Prov_Employee, full$Q6_8, prop.r=TRUE, prop.c=FALSE, prop.t=FALSE, prop.chisq=FALSE)
+
+?CrossTable
+
+full%>% 
+  filter(Sample=='Public Health') %>%
+  select(Prov_Employee, Trust_Prov) %>% 
+  filter(!is.na(Prov_Employee)) %>%
+  group_by(Prov_Employee) %>% 
+  #summarize(average=mean(Q6_8), sd=sd(Q6_8), n=n(), se=sd/sqrt(n)) %>% 
+  ggplot(., aes(y=as_factor(Trust_Prov), fill=as_factor(Trust_Prov)))+geom_bar(aes(x=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..]))+scale_x_continuous(labels = scales::percent)+facet_wrap(~as_factor(Prov_Employee))+
+  labs(y="Provincial Government")+xlab("% of respondents")+scale_fill_brewer(palette = "Set2")+ theme(legend.position = "none")
+
+full%>% 
+  filter(Sample=='Public Health') %>%
+  select(Prov_Employee, Trust_Fed) %>% 
+  filter(!is.na(Prov_Employee)) %>%
+  group_by(Prov_Employee) %>% 
+  #summarize(average=mean(Q6_9), sd=sd(Q6_8), n=n(), se=sd/sqrt(n)) %>% 
+  ggplot(., aes(y=as_factor(Trust_Fed), fill=as.factor(Trust_Fed)))+geom_bar(aes(x=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..]))+scale_x_continuous(labels = scales::percent)+facet_wrap(~as_factor(Prov_Employee))+
+  labs(y="Federal Government")+xlab("% of respondents")+scale_fill_brewer(palette = "Set2")+ theme(legend.position = "none")
+?facet_wrap

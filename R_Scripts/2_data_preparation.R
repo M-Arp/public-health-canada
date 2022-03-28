@@ -681,3 +681,46 @@ full %>%
 # table(full$Sample)
 # write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
 
+####Creating a variable for provincial health workers
+full %>% 
+  mutate(
+    Prov_Employee=case_when(
+      Q62==1~1,
+      Q62==2~0,
+      Q62==3~0,
+      Q62==4~0,
+      Q62==5~0,
+      Q62==6~0
+    )
+  )->full
+
+val_labels(full$Prov_Employee)<-c(`Provincial Health Worker`=1, `Non-Provincial Health Worker`=0)
+
+####Creating a dichotomous variable for trust in provincial government
+full %>% 
+  mutate(
+    Trust_Prov=case_when(
+      Q6_8==1~0,
+      Q6_8==2~0,
+      Q6_8==3~0,
+      Q6_8==4~1,
+      Q6_8==5~1
+    )
+  )->full
+
+val_labels(full$Trust_Prov)<-c(`More Trustworthy`=1, `Neutral or Less Trustworthy`=0)
+
+####Creating a dichotomous variable for trust in federal government
+full %>% 
+  mutate(
+    Trust_Fed=case_when(
+      Q6_9==1~0,
+      Q6_9==2~0,
+      Q6_9==3~0,
+      Q6_9==4~1,
+      Q6_9==5~1
+    )
+  )->full
+
+val_labels(full$Trust_Fed)<-c(`More Trustworthy`=1, `Neutral or Less Trustworthy`=0)
+val_labels(full$Trust_Fed)
