@@ -1,4 +1,5 @@
-source('R_Scripts/2_data_preparation.R')
+library(here)
+source('R_Scripts/2a_demographic_comparison.R')
 theme_set(theme_minimal())
 # install.packages("crosstable")
 # library(crosstable)
