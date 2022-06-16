@@ -1260,7 +1260,7 @@ table(full$Prov_Employee, full$Q6_8)
 
 CrossTable(full$Prov_Employee, full$Q6_8, prop.r=TRUE, prop.c=FALSE, prop.t=FALSE, prop.chisq=FALSE)
 
-?CrossTable
+
 
 full%>% 
   filter(Sample=='Public Health') %>%
