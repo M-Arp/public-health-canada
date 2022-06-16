@@ -1279,4 +1279,3 @@ full%>%
   #summarize(average=mean(Q6_9), sd=sd(Q6_8), n=n(), se=sd/sqrt(n)) %>% 
   ggplot(., aes(y=as_factor(Trust_Fed), fill=as.factor(Trust_Fed)))+geom_bar(aes(x=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..]))+scale_x_continuous(labels = scales::percent)+facet_wrap(~as_factor(Prov_Employee))+
   labs(y="Federal Government")+xlab("% of respondents")+scale_fill_brewer(palette = "Set2")+ theme(legend.position = "none")
-?facet_wrap

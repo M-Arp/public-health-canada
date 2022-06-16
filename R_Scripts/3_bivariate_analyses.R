@@ -1,5 +1,15 @@
 source('R_Scripts/2_data_preparation.R')
-theme_set(theme_bw())
+theme_set(theme_minimal())
+#### Demographic Summary ####
+library(flextable)
+library(gtsummary)
+library(gt)
+
+full %>% 
+  select(Sample, `High Income`, Francophone1, Rural1, Degree1, Female1, Age) %>% 
+tbl_summary(by=Sample, type=list(Age~"continuous"), statistic=list(Age ~ " {mean} ")) %>% 
+as_gt() %>% 
+  gtsave(filename=here("Tables", "cjph_demographics_comparison.html"))
 
 #### Most Important Problem#### 
 names(full)
@@ -9,10 +19,11 @@ full %>%
   group_by(Sample, name, value) %>%
   as_factor() %>% 
   summarize(n=n()) %>% 
-  mutate(pct=n/sum(n)) %>% 
+  mutate(Percent=(n/sum(n))*100) %>% 
   filter(value!="Not Selected") %>% 
-  ggplot(., aes(y=name, x=pct, fill=Sample))+geom_col(position="dodge")+scale_fill_grey()+labs(title=str_wrap("Percent Selecting Issues as Most Important Public Health Problem After COVID-19", width=40))
-ggsave(here("Plots", "most_important_problem_group.png"), width=6, height=3)
+  ggplot(., aes(y=fct_reorder(name, Percent), x=Percent, fill=Sample))+geom_col(position="dodge")+scale_fill_grey()+labs(title=str_wrap("Percent Selecting Issues as Most Important Public Health Problem After COVID-19", width=40), y="Issue")+guides(fill=guide_legend(reverse=T))
+
+ggsave(here("Plots", "cjph_most_important_problem_group.png"), width=6, height=3)
 ####  Views on science in policy ####
 lookfor(full, "policy")
 ggplot(full, aes(x=as.numeric(Q30_1), fill=Sample,..scaled..))+
@@ -45,8 +56,9 @@ pivot_longer(., cols=-Sample) %>%
   # and replace the last pipe with a save out -> to some object 
   # like trade_off_Sample
   # But here we are just going right to graph. 
-  ggplot(., aes(x=name, y=average, col=Sample))+geom_point()+ylim(c(1,10))+
-  geom_errorbar(aes(ymin=average-(1.96*se), ymax=average+(1.96*se)), width=0)+coord_flip()
+  ggplot(., aes(x=average, y=fct_recode(name, "Reduce Social Isoation"="social_isolation", "Reduce Seniors' Isolation"="seniors_isolation", "Keep Schools Open"="schools_open","Prevent Economic Decline"="decline_economy" ), col=Sample))+geom_point()+xlim(c(1,10))+
+  geom_errorbar(aes(xmin=average-(1.96*se), xmax=average+(1.96*se)), width=0)+
+  labs(x="1=Stopping the spread of COVID-19 \n 10=Other considerations", y="Policy", title= str_wrap("In public health, it is often important to decide between accomplishing multiple outcomes, which outcome is more important to you?", width=60))
 ggsave(here('Plots', 'trade_off_group.png'), width=6, height=2)
 
 #### Difference Between Samples and Support For Measures
@@ -87,7 +99,7 @@ ggplot(full, aes(x=trust_average,fill=Sample,..scaled..))+geom_density(alpha=0.5
 ggsave(here("Plots", "trust_average_group_density.png"))
 
 #### Ideology ####
-ggplot(full, aes(x=Q51, fill=Sample))+geom_density(alpha=0.5)+labs(title="Self-Reported Ideology by Sample")
+
 ggsave(here("Plots", "ideology_group_density.png"))
 
 #### Influence #### 
@@ -108,6 +120,7 @@ ggsave(here("Plots", "influences_do_group.png"), width=6, height=2)
 
 #### Influence #### 
 lookfor(full, "influence")
+library(ggsignif)
 full %>% 
   select(Sample,contains("does"), contains("should")) %>% 
   pivot_longer(., cols=-Sample) %>% 
@@ -122,8 +135,10 @@ str_detect(name, pattern="should") ~"Should Influence"
   mutate(Percent=(n/sum(n))*100, error=sqrt((Percent*(100-Percent))/n)) %>% 
   filter(value==1) %>% 
   as_factor() %>% 
-  ggplot(., aes(y=Sample, x=Percent, fill=Sample, alpha=Condition))+geom_col(position="dodge")+labs(y="Influence")+scale_fill_discrete(limits=rev)+facet_wrap(~str_wrap(name, width=20))+scale_alpha_discrete(limits=rev)+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))
-ggsave(here("Plots", "influences_do_should_policy_sample.png"), width=6, height=2)
+  ungroup() %>% 
+  ggplot(., aes(y=Sample, x=Percent, fill=Sample, alpha=fct_relevel(Condition, "Should Influence")))+geom_col(position="dodge")+labs(y="Influence")+facet_grid(fct_relevel(Sample, "Public Health")~fct_reorder(str_wrap(name, width=20), desc(Percent)), scales="free_y")+geom_errorbarh(aes(xmin=Percent-(1.96*error), xmax=Percent+(1.96*error)),height=0, position=position_dodge(0.9))+scale_fill_manual(values=c('black', 'lightgrey'), limits=rev, guide='none')+scale_alpha_manual(values=c(1,0.3, 0.3,1), limits=rev, name="Influence")+theme(strip.text.y=element_blank())+labs(y="Sample")
+
+ggsave(here("Plots", "cjph_influences_do_should_policy_sample.png"), width=10, height=2)
 
 full %>% 
   select(Sample,contains("should")) %>% 
@@ -180,3 +195,5 @@ out %>%
   filter(term=="avgtotal_last7_pop_per_capita") %>% 
   filter(name!="avgtotal_last7_pop_per_capita") %>% 
   ggplot(., aes(x=value, y=name, fill=Sample))+geom_col(position="dodge")+xlim(c(-0.2,0.2))+labs(title="Correlation Between Policy Preference\nand Local Conditions" , x="Pearson correlation Coefficient")
+ggsave(here("Plots", "local_covid_evidence_preferences.png"))
+

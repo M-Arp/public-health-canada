@@ -399,33 +399,41 @@ full %>%
 full$Age<-2021-full$Q55_1
 
 full %>% 
-  mutate(age_4=case_when(
-    #18 to 34
-    Age > 17 & Age < 35 ~ 1,
-    #35-50  
-    Age > 34 & Age < 51 ~ 2,
-    #51-64
-    Age > 50 & Age < 65 ~ 3,
-    #65+
-    Age > 64 ~ 4
-  ))->full
+mutate(age_4=case_when(
+#18 to 34
+  Age > 17 & Age < 35 ~ 1,
+#35-50  
+  Age > 34 & Age < 51 ~ 2,
+#51-64
+  Age > 50 & Age < 65 ~ 3,
+#65+
+  Age > 64 ~ 4
+))->full
 
 var_label(full$age_4)<-'Age Category (4), R Age'
 val_labels(full$age_4)<-c('Age 65+' = 4, 'Age 51-64'= 3, 'Age 35-50' = 2, 'Age 18-34' = 1)
 
 full%>%
-  mutate(age_2=case_when(
-    #Under 50
-    Age < 50 ~ 1,
-    #50 and up
-    Age > 49 ~ 2
-  ))->full
-
+mutate(age_2=case_when(
+#Under 50
+  Age < 50 ~ 1,
+#50 and up
+  Age > 49 ~ 2
+))->full
 
 var_label(full$age_2)<-'Age Category (2), R Age'
 val_labels(full$age_2)<-c('Age 50+' = 2, 'Age 18-49' = 1)
 
 names(full)
+
+full%>%
+  select(Age, Sample)%>%
+  ggplot(., aes(x=Age))+geom_histogram()+facet_grid(~Sample)
+
+full%>%
+  select(Sample, age_3, Q8_3)%>%
+  group_by(Sample, age_3)%>%
+  summarize(avg=mean(Q8_3, na.rm=T))
 
 full %>%
   mutate(quebec=case_when(
@@ -667,7 +675,6 @@ full$Rural1<-as_factor(full$rural)
 full$Francophone1<-as_factor(full$francophone)
 full$Degree1<-as_factor(full$degree)
 full$Female1<-as_factor(full$female)
-full$age_2_1<-as_factor(full$age_2)
 
 names(full)
 
@@ -681,46 +688,3 @@ full %>%
 # table(full$Sample)
 # write_sav(full, path=paste0(here("data", "/recoded_data"), "_",Sys.Date(), ".sav"))
 
-####Creating a variable for provincial health workers
-full %>% 
-  mutate(
-    Prov_Employee=case_when(
-      Q62==1~1,
-      Q62==2~0,
-      Q62==3~0,
-      Q62==4~0,
-      Q62==5~0,
-      Q62==6~0
-    )
-  )->full
-
-val_labels(full$Prov_Employee)<-c(`Provincial Health Worker`=1, `Non-Provincial Health Worker`=0)
-
-####Creating a dichotomous variable for trust in provincial government
-full %>% 
-  mutate(
-    Trust_Prov=case_when(
-      Q6_8==1~0,
-      Q6_8==2~0,
-      Q6_8==3~0,
-      Q6_8==4~1,
-      Q6_8==5~1
-    )
-  )->full
-
-val_labels(full$Trust_Prov)<-c(`More Trustworthy`=1, `Neutral or Less Trustworthy`=0)
-
-####Creating a dichotomous variable for trust in federal government
-full %>% 
-  mutate(
-    Trust_Fed=case_when(
-      Q6_9==1~0,
-      Q6_9==2~0,
-      Q6_9==3~0,
-      Q6_9==4~1,
-      Q6_9==5~1
-    )
-  )->full
-
-val_labels(full$Trust_Fed)<-c(`More Trustworthy`=1, `Neutral or Less Trustworthy`=0)
-val_labels(full$Trust_Fed)
